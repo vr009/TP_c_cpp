@@ -37,7 +37,7 @@ int set_protocol(const char *input,size_t size_,address * addr){
 
         memcpy(addr->protocol, input, pr_size);
         return protocol_validate(addr->protocol);
-    }
+    } else return 0;
 }
 
 
