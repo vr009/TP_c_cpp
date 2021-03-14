@@ -21,7 +21,7 @@ int protocol_validate(const char * protocol){
         if(strcmp(protocol, "mailto") == 0) return 1;
         if(strcmp(protocol, "file") == 0) return 1;
         if(strcmp(protocol, "news") == 0) return 1;
-        if(strcmp(protocol, "telnet")==0)return 1;
+        if(strcmp(protocol, "telnet") == 0)return 1;
         return 0;
     } else return 0;
 }
