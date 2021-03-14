@@ -14,9 +14,7 @@ int main(int argc, char**argv){
     gets(input);
     address* temp = parse(input);
     if(temp == NULL) printf("Invalid input\n");
-    else {
-        print_info(temp);
-    }
+    else print_info(temp);
     address_free(temp);
     return 0;
 }

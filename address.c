@@ -15,25 +15,25 @@ typedef struct address address;
 
 int protocol_validate(const char * protocol){
     if(protocol != NULL){
-        int a = strcmp(protocol, "http");
-        int b = strcmp(protocol, "https");
-        int c = strcmp(protocol, "ftp");
-        int d = strcmp(protocol, "mailto");
-        int e = strcmp(protocol, "file");
-        int f = strcmp(protocol, "news");
-        int g = strcmp(protocol, "telnet");
-        return (a || b || c || d || e || f || g);
+        if(strcmp(protocol, "http") == 0) return 1;
+        if(strcmp(protocol, "https") == 0) return 1;
+        if(strcmp(protocol, "ftp") == 0) return 1;
+        if(strcmp(protocol, "mailto") == 0) return 1;
+        if(strcmp(protocol, "file") == 0) return 1;
+        if(strcmp(protocol, "news") == 0) return 1;
+        if(strcmp(protocol, "telnet")==0)return 1;
+        return 0;
     } else return 0;
 }
 
 int set_protocol(const char *input,size_t size_,address * addr){
     if(input != NULL && addr!= NULL){
         int pr_size = 0;
-        while (input[pr_size] != ':' & pr_size < size_) {
+        while (pr_size+2 < size_  & input[pr_size] != ':' ) {
             pr_size++;
         }
-        if (pr_size == size_ || input[pr_size + 1] != '/' || input[pr_size + 2] != '/') return 0;
-
+        if (pr_size > size_-3) return 0;
+		if ( input[pr_size + 1] != '/' || input[pr_size + 2] != '/') return 0;
         if(addr->protocol = (char *) malloc(pr_size + 1)){
             memcpy(addr->protocol, input, pr_size);
             addr->protocol[pr_size] = '\0';
@@ -57,7 +57,7 @@ int set_url(const char *input,size_t size_,address * addr){
 
         if(addr->url = (char *) malloc(url_size + 1)){
             memcpy(addr->url, input + (size_ - url_size), url_size);
-            addr->url[url_size+1] = '\0';
+            addr->url[url_size] = '\0';
             return 1;
         } else return 0;
 
@@ -85,10 +85,10 @@ int set_domain(const char *input,size_t size_,address * addr){
         addr->top_level_domain = (char *) malloc(dom_size + 2);
         addr->sub_domains = (char *)malloc(end_index - start_index + 1);
         if(addr->top_level_domain && addr->sub_domains){
-            memcpy(addr->top_level_domain, input + end_index, dom_size + 1);
+            memcpy(addr->top_level_domain, input + end_index, dom_size+1);
             addr->top_level_domain[dom_size+1] = '\0';
             memcpy(addr->sub_domains, input + start_index, end_index - start_index);
-            addr->sub_domains[end_index - start_index+1] = '\0';
+            addr->sub_domains[end_index - start_index] = '\0';
             return 1;
         } else return 0;
         //TODO validation
@@ -101,23 +101,47 @@ address* parse(const char*input){
         int size_ = strlen(input);
         if(size_>0){
             address *addr = (address *) malloc(sizeof(struct address));
+            addr->protocol = NULL;
+            addr->url=NULL;
+            addr->sub_domains = NULL;
+            addr->top_level_domain = NULL;
             //get protocol
-            if (!set_protocol(input, size_, addr)) return NULL;
+            if (!set_protocol(input, size_, addr)){
+				 address_free(addr);
+				 //free(addr);
+				 return NULL;
+			 }
             // get url
-            if (!set_url(input, size_, addr)) return NULL;
+            if (!set_url(input, size_, addr)){
+				 address_free(addr);
+				 //free(addr);
+				 return NULL;
+			 }
             //get domain
-            if (!set_domain(input, size_, addr)) return NULL;
+            if (!set_domain(input, size_, addr)){
+				 address_free(addr);
+				 //free(addr);
+				 return NULL;
+			 }
             return addr;
         } else return NULL;
     } else return NULL;
 }
 
 void address_free(address * addr){
-    free(addr->protocol);
-    free(addr->url);
-    free(addr->sub_domains);
-    free(addr->top_level_domain);
-    free(addr);
+    
+    if(addr!=NULL) {
+		if(addr->protocol!=NULL) free(addr->protocol);
+		addr->protocol = NULL;
+		if(addr->url!=NULL) free(addr->url);
+		addr->url = NULL;
+		if(addr->sub_domains!=NULL) free(addr->sub_domains);
+		addr->sub_domains=NULL;
+		if(addr->top_level_domain !=NULL) free(addr->top_level_domain);
+		addr->top_level_domain=NULL;
+		free(addr);
+		addr = NULL;
+	}
 }
 
 void print_info(address * addr){
