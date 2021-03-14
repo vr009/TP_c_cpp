@@ -108,19 +108,16 @@ address* parse(const char*input){
             //get protocol
             if (!set_protocol(input, size_, addr)){
 				 address_free(addr);
-				 //free(addr);
 				 return NULL;
 			 }
             // get url
             if (!set_url(input, size_, addr)){
 				 address_free(addr);
-				 //free(addr);
 				 return NULL;
 			 }
             //get domain
             if (!set_domain(input, size_, addr)){
 				 address_free(addr);
-				 //free(addr);
 				 return NULL;
 			 }
             return addr;
