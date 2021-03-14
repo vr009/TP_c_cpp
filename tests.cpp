@@ -4,6 +4,7 @@ extern "C"{
 #include "address.h"
 
 }
+<<<<<<< HEAD
 
 //===========COMPLEX SET======================================
 TEST(addr, all){

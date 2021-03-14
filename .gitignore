@@ -1,6 +1,10 @@
 .idea/
 /cmake-build-debug/*
 
+/build/*
+
+
+
 
 # Prerequisites
 *.d
@@ -53,4 +57,8 @@
 modules.order
 Module.symvers
 Mkfile.old
+<<<<<<< HEAD
 dkms.conf
+=======
+dkms.conf
+>>>>>>> 2fb61c4ee01a32399bae982396df11c227da8ce0
