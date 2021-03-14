@@ -27,7 +27,6 @@ int protocol_validate(const char * protocol){
 }
 
 int set_protocol(const char *input,size_t size_,address * addr){
-
     if(input != NULL && addr!= NULL){
         int pr_size = 0;
         while (input[pr_size] != ':' & pr_size < size_) {
