@@ -5,10 +5,10 @@
 #include "address.h"
 
 struct address{
-    char protocol[15];
-    char top_level_domain[10];
-    char sub_domains[65];
-    char url[65];
+    char *protocol;
+    char *top_level_domain;
+    char *sub_domains;
+    char *url;
 };
 typedef struct address address;
 
@@ -34,8 +34,12 @@ int set_protocol(const char *input,size_t size_,address * addr){
         }
         if (pr_size == size_ || input[pr_size + 1] != '/' || input[pr_size + 2] != '/') return 0;
 
-        memcpy(addr->protocol, input, pr_size);
-        return protocol_validate(addr->protocol);
+        if(addr->protocol = (char *) malloc(pr_size + 1)){
+            memcpy(addr->protocol, input, pr_size);
+            addr->protocol[pr_size] = '\0';
+            return protocol_validate(addr->protocol);
+        } else return 0;
+
     } else return 0;
 }
 
@@ -50,8 +54,13 @@ int set_url(const char *input,size_t size_,address * addr){
         if (start_index == size_) return 0;
 
         url_size = size_ - start_index;
-        memcpy(addr->url, input + (size_ - url_size), url_size);
-        return 1;
+
+        if(addr->url = (char *) malloc(url_size + 1)){
+            memcpy(addr->url, input + (size_ - url_size), url_size);
+            addr->url[url_size+1] = '\0';
+            return 1;
+        } else return 0;
+
     } else return 0;
 }
 
@@ -72,10 +81,17 @@ int set_domain(const char *input,size_t size_,address * addr){
             dom_size++;
             end_index--;
         }
-        memcpy(addr->top_level_domain, input + end_index, dom_size + 1);
-        memcpy(addr->sub_domains, input + start_index, end_index - start_index);
+
+        addr->top_level_domain = (char *) malloc(dom_size + 2);
+        addr->sub_domains = (char *)malloc(end_index - start_index + 1);
+        if(addr->top_level_domain && addr->sub_domains){
+            memcpy(addr->top_level_domain, input + end_index, dom_size + 1);
+            addr->top_level_domain[dom_size+1] = '\0';
+            memcpy(addr->sub_domains, input + start_index, end_index - start_index);
+            addr->sub_domains[end_index - start_index+1] = '\0';
+            return 1;
+        } else return 0;
         //TODO validation
-        return 1;
     } else return 0;
 }
 
@@ -97,6 +113,10 @@ address* parse(const char*input){
 }
 
 void address_free(address * addr){
+    free(addr->protocol);
+    free(addr->url);
+    free(addr->sub_domains);
+    free(addr->top_level_domain);
     free(addr);
 }
 
@@ -106,5 +126,6 @@ void print_info(address * addr){
         printf("Sub-Domain: %s\n", addr->sub_domains);
         printf("Top-Domain: %s\n", addr->top_level_domain);
         printf("Url: %s\n", addr->url);
+        //printf("%d\n%d\n%d\n%d\n",strcmp("http",addr->protocol),strcmp("mail",addr->sub_domains),strcmp(".ru",addr->top_level_domain),strcmp("/index.html",addr->url));
     }
 }
