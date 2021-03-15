@@ -24,7 +24,7 @@ script:
   - mkdir build
   - cd build
   - cmake ..
-  - cd build
+  - cd /home/travis/build/vr009/TP_c_cpp/build
   - make
 #  - make tests
 
