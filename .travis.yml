@@ -1,99 +1,30 @@
 language: c
 
-os:
-  - linux
+os: linux
 
-dist: trusty
-
-compiler:
-  -gcc
-
-
-matrix:
-  include:
-    # works on Precise and Trusty
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
-      env:
-        - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
-
-    # works on Precise and Trusty
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-
-    # works on Precise and Trusty
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-      env:
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
-
-    # works on Precise and Trusty
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-      env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+addons:
+  apt:
+    packages:
+      - valgrind
+      - lcov
 
 before_install:
-  - eval "${MATRIX_EVAL}"
+  - sudo apt update
+
+compiler:
+  - gcc
+  - clang
 
 
+script:
+  - mkdir build
+  - cd build
+  - cmake .. -DENABLE_TESTS=ON -DENABLE_STATIC_CHECK=ON
+  - make
+  - ctest -VV -t memcheck
 
-
-#matrix:
-#  include:
-#         - os: linux
-#          env:
-#            - TEST="Valgrind"
-#          addons:
-#            apt:
-#              sources:
-#                - ubuntu-toolchain-r-test
-#              packages:
-#                - gcc-6
-#                - g++-6
-#                - valgrind
-#          script:
-#            - cmake -DCMAKE_CXX_COMPILER="g++-6" ..
-#            - make
-#            - ctest -T memcheck
-
-
-#    - os:
-#        - linux
-#
-#      compiler:
-#        - clang
-#        - gcc
-#
-#      install:
-#        - source ci/travis/install-$TRAVIS_OS_NAME.sh
-#
-#      script:
-#        - mkdir build
-#        - cd build
-#        - cmake ..
-#        - make
-#        - make tests
-#
+after_success:
+  - lcov --capture --directory . --output-file coverage.info
+  - lcov --remove coverage.info '/usr/*' --output-file coverage.info
+  - lcov --list coverage.info
+  - bash <(curl -s https://codecov.io/bash) -f coverage.info
