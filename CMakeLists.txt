@@ -40,7 +40,7 @@ if (ENABLE_STATIC_CHECK)
             --error-exitcode=1 #роняем тесты
             --language=c++
             -I ${CMAKE_SOURCE_DIR}/include
-            ${CMAKE_SOURCE_DIR}/src/*.c
+            ${CMAKE_SOURCE_DIR}/*.c
             )
 
 
