@@ -29,7 +29,7 @@ int protocol_validate(const char * protocol){
 int set_protocol(const char *input,size_t size_,address * addr){
     if(input != NULL && addr!= NULL){
         size_t pr_size = 0;
-        while (pr_size+2 < size_  & input[pr_size] != ':' ) {
+        while ((pr_size+2 < size_)  & (input[pr_size] != ':') ) {
             pr_size++;
         }
         if (pr_size > size_-3) return 0;
@@ -49,7 +49,7 @@ int set_url(const char *input,size_t size_,address * addr){
     if(input != NULL && addr!= NULL){
         int url_size = 0;
         size_t start_index = strlen(addr->protocol) + 3; // <protocol> + sizeof('://')
-        while (input[start_index] != '/' || input[start_index] != '\0') {
+        while ((input[start_index] != '/') & (input[start_index] != '\0')) {
             ++start_index;
         }
         if (start_index == size_) return 0;

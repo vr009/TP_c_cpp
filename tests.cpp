@@ -80,86 +80,86 @@ int answer = set_protocol(text,strlen(text),&addr);
 EXPECT_EQ(answer,0);
 }
 
-
-
-
-//============URL SET==================================
-TEST(addr, url_set_check_correct){
-const char * text = "http://mail.ru/index.html";
-struct address addr = {"http"};
-int answer2 = set_url(text,strlen(text),&addr);
-EXPECT_EQ(answer2,1);
-ASSERT_EQ(0,strcmp("/index.html",addr.url));
-free(addr.url);
-}
-
-TEST(addr, url_set_check_correct2){
-const char * text = "ftp://google.com/stat/index.html";
-struct address addr = {"ftp"};
-int answer2 = set_url(text,strlen(text),&addr);
-EXPECT_EQ(answer2,1);
-ASSERT_EQ(0,strcmp("/stat/index.html",addr.url));
-free(addr.url);
-}
-
-TEST(addr, url_set_check_incorrect3){
-const char * text = "ftp://index.html";
-struct address addr;
-int answer2 = set_url(text,strlen(text),&addr);
-EXPECT_EQ(answer2,0);
-}
-
-
-TEST(addr, url_set_check_incorrect4){
-const char * text = "blablabla";
-struct address addr;
-int answer2 = set_url(text,strlen(text),&addr);
-EXPECT_EQ(answer2,0);
-}
-//============DOMAIN SET================================
-TEST(addr, domain_set_check_correct1){
-const char * text = "http://www.google.com/index.html";
-struct address addr;
-addr.protocol = "http";
-addr.url = "/index.html";
-int answer = set_domain(text,strlen(text),&addr);
-EXPECT_EQ(answer,1);
-ASSERT_EQ(0,strcmp("www.google",addr.sub_domains));
-ASSERT_EQ(0,strcmp(".com",addr.top_level_domain));
-free(addr.sub_domains);
-free(addr.top_level_domain);
-}
-
-TEST(addr, domain_set_check_correct2){
-const char * text = "ftp://mail.ru/stat/index.html";
-struct address addr;
-addr.protocol = "ftp";
-addr.url = "/stat/index.html";
-int answer = set_domain(text,strlen(text),&addr);
-ASSERT_EQ(0,strcmp("mail",addr.sub_domains));
-ASSERT_EQ(0,strcmp(".ru",addr.top_level_domain));
-free(addr.sub_domains);
-free(addr.top_level_domain);
-}
-
-TEST(addr, domain_set_check_incorrect1){
-const char * text = "ftp://index.html";
-struct address addr; 
-addr.protocol = "ftp";
-addr.url = "/index.html";
-int answer = set_domain(text,strlen(text),&addr);
-EXPECT_EQ(answer,0);
-}
-
-
-TEST(addr, domain_set_check_incorrect2){
-const char * text = "blablabfgfdgfdgla";
-struct address addr;
-addr.protocol="";
-addr.url="";
-int answer = set_domain(text,strlen(text),&addr);
-EXPECT_EQ(answer,0);
-}
+//
+//
+//
+////============URL SET==================================
+//TEST(addr, url_set_check_correct){
+//const char * text = "http://mail.ru/index.html";
+//struct address addr = {"http"};
+//int answer2 = set_url(text,strlen(text),&addr);
+//EXPECT_EQ(answer2,1);
+//ASSERT_EQ(0,strcmp("/index.html",addr.url));
+//free(addr.url);
+//}
+//
+//TEST(addr, url_set_check_correct2){
+//const char * text = "ftp://google.com/stat/index.html";
+//struct address addr = {"ftp"};
+//int answer2 = set_url(text,strlen(text),&addr);
+//EXPECT_EQ(answer2,1);
+//ASSERT_EQ(0,strcmp("/stat/index.html",addr.url));
+//free(addr.url);
+//}
+//
+//TEST(addr, url_set_check_incorrect3){
+//const char * text = "ftp://index.html";
+//struct address addr;
+//int answer2 = set_url(text,strlen(text),&addr);
+//EXPECT_EQ(answer2,0);
+//}
+//
+//
+//TEST(addr, url_set_check_incorrect4){
+//const char * text = "blablabla";
+//struct address addr;
+//int answer2 = set_url(text,strlen(text),&addr);
+//EXPECT_EQ(answer2,0);
+//}
+////============DOMAIN SET================================
+//TEST(addr, domain_set_check_correct1){
+//const char * text = "http://www.google.com/index.html";
+//struct address addr;
+//addr.protocol = "http";
+//addr.url = "/index.html";
+//int answer = set_domain(text,strlen(text),&addr);
+//EXPECT_EQ(answer,1);
+//ASSERT_EQ(0,strcmp("www.google",addr.sub_domains));
+//ASSERT_EQ(0,strcmp(".com",addr.top_level_domain));
+//free(addr.sub_domains);
+//free(addr.top_level_domain);
+//}
+//
+//TEST(addr, domain_set_check_correct2){
+//const char * text = "ftp://mail.ru/stat/index.html";
+//struct address addr;
+//addr.protocol = "ftp";
+//addr.url = "/stat/index.html";
+//int answer = set_domain(text,strlen(text),&addr);
+//ASSERT_EQ(0,strcmp("mail",addr.sub_domains));
+//ASSERT_EQ(0,strcmp(".ru",addr.top_level_domain));
+//free(addr.sub_domains);
+//free(addr.top_level_domain);
+//}
+//
+//TEST(addr, domain_set_check_incorrect1){
+//const char * text = "ftp://index.html";
+//struct address addr;
+//addr.protocol = "ftp";
+//addr.url = "/index.html";
+//int answer = set_domain(text,strlen(text),&addr);
+//EXPECT_EQ(answer,0);
+//}
+//
+//
+//TEST(addr, domain_set_check_incorrect2){
+//const char * text = "blablabfgfdgfdgla";
+//struct address addr;
+//addr.protocol="";
+//addr.url="";
+//int answer = set_domain(text,strlen(text),&addr);
+//EXPECT_EQ(answer,0);
+//}
 
 //================================================
 
