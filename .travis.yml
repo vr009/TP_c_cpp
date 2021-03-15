@@ -1,3 +1,14 @@
+language: cpp
+
+os:
+  - linux
+
+dist: trusty
+
+compiler:
+  -gcc
+
+
 matrix:
   include:
     # works on Precise and Trusty
