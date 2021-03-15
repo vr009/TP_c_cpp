@@ -23,10 +23,9 @@ install:
 script:
   - mkdir build
   - cd build
-  - cmake .. -DENABLE_TESTS=ON -DENABLE_STATIC_CHECK=ON
+  - cmake ..
   - make
   - make tests
-  - ctest -VV -t memcheck
 
 after_success:
   - lcov --capture --directory . --output-file coverage.info
