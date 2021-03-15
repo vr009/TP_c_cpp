@@ -20,7 +20,6 @@ before_install:
 
 compiler:
   - gcc
-  - clang
 
 install:
   - sudo apt-get update
@@ -41,6 +40,7 @@ script:
   - cmake .
   - make || travis_terminate 1
   - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./iz1_task || travis_terminate 1
+  - ./tests
 #  - make tests
 
 after_success:
