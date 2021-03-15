@@ -1,0 +1,36 @@
+matrix:
+  include:
+         - os: linux
+          env:
+            - TEST="Valgrind"
+          addons:
+            apt:
+              sources:
+                - ubuntu-toolchain-r-test
+              packages:
+                - gcc-6
+                - g++-6
+                - valgrind
+          script:
+            - cmake -DCMAKE_CXX_COMPILER="g++-6" ..
+            - make
+            - ctest -T memcheck
+
+
+#    - os:
+#        - linux
+#
+#      compiler:
+#        - clang
+#        - gcc
+#
+#      install:
+#        - source ci/travis/install-$TRAVIS_OS_NAME.sh
+#
+#      script:
+#        - mkdir build
+#        - cd build
+#        - cmake ..
+#        - make
+#        - make tests
+#
