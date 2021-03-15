@@ -5,4 +5,9 @@ GTEST_TAR=gtest-release-1.10.0.tar.gz
 wget --quit $GTEST_URL
 mkdir -p $GTEST_DIR
 tar -xzf $CMAKE_TAR -C $CMAKE_DIR
+cd ${GTEST_DIR}
+mkdir build
+cd build
+cmake ..
+make install
 export PATH=$GTEST_DIR/bin:$PATH
