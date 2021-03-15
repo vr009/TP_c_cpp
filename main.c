@@ -9,16 +9,18 @@
 #include "address.h"
 
 int main(int argc, char**argv){
-    FILE *f;
+    FILE *f=fopen("../correct_input.txt","r");
 
-    if(fopen("correct_input.txt","r")){
+    if(f!=NULL){
+        printf("here");
         char input[100];
-        fscanf(f,input);
+        fscanf(f,"%s",input);
         address *temp = parse(input);
         if (temp == NULL) printf("Invalid input\n");
         else print_info(temp);
         address_free(temp);
         fclose(f);
     }
+
     return 0;
 }
