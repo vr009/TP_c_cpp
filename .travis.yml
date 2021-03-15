@@ -26,7 +26,7 @@ install:
   - source ci/install-linux.sh
 
 script:
-  - cmake
+  - cmake .
   - make || travis_terminate 1
   - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./iz1_task || travis_terminate 1
 #  - make tests
