@@ -155,6 +155,8 @@ EXPECT_EQ(answer,0);
 TEST(addr, domain_set_check_incorrect2){
 const char * text = "blablabfgfdgfdgla";
 struct address addr;
+addr.protocol="";
+addr.url="";
 int answer = set_domain(text,strlen(text),&addr);
 EXPECT_EQ(answer,0);
 }
