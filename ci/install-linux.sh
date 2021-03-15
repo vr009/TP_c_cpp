@@ -4,7 +4,7 @@ GTEST_TAR=gtest-release-1.10.0.tar.gz
 
 wget $GTEST_URL
 mkdir -p $GTEST_DIR
-tar -xzf $CMAKE_TAR $CMAKE_DIR
+tar -xzf $GTEST_TAR $GTEST_DIR
 cd ${GTEST_DIR}
 mkdir build
 cd build
