@@ -26,11 +26,9 @@ install:
   - source ci/install-linux.sh
 
 script:
-  - mkdir build
-  - cd build
-  - cmake ..
-  - cd /home/travis/build/vr009/TP_c_cpp/build
-  - make
+  - cmake
+  - make || travis_terminate 1
+  - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./iz1_task || travis_terminate 1
 #  - make tests
 
 after_success:
