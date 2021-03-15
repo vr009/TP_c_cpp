@@ -49,7 +49,6 @@ script:
   - ./tests
 #  - make tests
 
-
 after_success:
   - lcov --capture --directory . --output-file coverage.info
   - lcov --remove coverage.info '/usr/*' --output-file coverage.info
