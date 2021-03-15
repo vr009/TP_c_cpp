@@ -148,6 +148,5 @@ void print_info(address * addr){
         printf("Sub-Domain: %s\n", addr->sub_domains);
         printf("Top-Domain: %s\n", addr->top_level_domain);
         printf("Url: %s\n", addr->url);
-        //printf("%d\n%d\n%d\n%d\n",strcmp("http",addr->protocol),strcmp("mail",addr->sub_domains),strcmp(".ru",addr->top_level_domain),strcmp("/index.html",addr->url));
     }
 }
