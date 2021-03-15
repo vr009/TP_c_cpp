@@ -5,16 +5,20 @@
  * (например, www.mail.ru).
  * На выход функция должна возвращать указатель на инициализированную структуру.
  * */
-
 #include <stdio.h>
 #include "address.h"
 
 int main(int argc, char**argv){
-    char input[100];
-    gets(input);
-    address* temp = parse(input);
-    if(temp == NULL) printf("Invalid input\n");
-    else print_info(temp);
-    address_free(temp);
+    FILE *f;
+
+    if(fopen("correct_input.txt","r")){
+        char input[100];
+        fscanf(f,input);
+        address *temp = parse(input);
+        if (temp == NULL) printf("Invalid input\n");
+        else print_info(temp);
+        address_free(temp);
+        fclose(f);
+    }
     return 0;
 }
