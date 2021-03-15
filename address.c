@@ -28,13 +28,14 @@ int protocol_validate(const char * protocol){
 
 int set_protocol(const char *input,size_t size_,address * addr){
     if(input != NULL && addr!= NULL){
-        int pr_size = 0;
+        size_t pr_size = 0;
         while (pr_size+2 < size_  & input[pr_size] != ':' ) {
             pr_size++;
         }
         if (pr_size > size_-3) return 0;
 		if ( input[pr_size + 1] != '/' || input[pr_size + 2] != '/') return 0;
-        if(addr->protocol = (char *) malloc(pr_size + 1)){
+        addr->protocol = (char *) malloc(pr_size + 1);
+		if(addr->protocol!=NULL){
             memcpy(addr->protocol, input, pr_size);
             addr->protocol[pr_size] = '\0';
             return protocol_validate(addr->protocol);
@@ -48,14 +49,14 @@ int set_url(const char *input,size_t size_,address * addr){
     if(input != NULL && addr!= NULL){
         int url_size = 0;
         size_t start_index = strlen(addr->protocol) + 3; // <protocol> + sizeof('://')
-        while (input[start_index] != '/' & input[start_index] != '\0') {
+        while (input[start_index] != '/' || input[start_index] != '\0') {
             ++start_index;
         }
         if (start_index == size_) return 0;
 
         url_size = size_ - start_index;
-
-        if(addr->url = (char *) malloc(url_size + 1)){
+        addr->url = (char *) malloc(url_size + 1);
+        if(addr->url!=NULL){
             memcpy(addr->url, input + (size_ - url_size), url_size);
             addr->url[url_size] = '\0';
             return 1;

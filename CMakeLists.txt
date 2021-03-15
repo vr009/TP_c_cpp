@@ -33,7 +33,7 @@ if (ENABLE_STATIC_CHECK)
     )
 
     list(APPEND CPPCHECK_ARGS
-#            --enable=warning,style,unusedFunction,missingInclude
+            --enable=warning,style,unusedFunction,missingInclude
             --inconclusive #проверяем маловероятные
             --std=c++11
             --verbose #более подробный анализ
