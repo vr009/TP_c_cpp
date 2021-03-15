@@ -61,15 +61,15 @@ endif ()
 
 
 
-#enable_testing()
-#find_package(GTest REQUIRED)
-#
-#include_directories(${GTEST_INCLUDE_DIRS})
-#message(${GTEST_LIBRARIES})
-#
-#add_executable(tests tests.cpp)
-#
-#target_link_libraries(tests ${GTEST_LIBRARIES} -lpthread)
-#target_link_libraries(tests address_lib)
-#
+enable_testing()
+find_package(GTest REQUIRED)
+
+include_directories(${GTEST_INCLUDE_DIRS})
+message(${GTEST_LIBRARIES})
+
+add_executable(tests tests.cpp)
+
+target_link_libraries(tests ${GTEST_LIBRARIES} -lpthread)
+target_link_libraries(tests address_lib)
+
 
