@@ -9,18 +9,26 @@
 #include "address.h"
 
 int main(int argc, char**argv){
-    FILE *f=fopen("../correct_input.txt","r");
 
-    if(f!=NULL){
-        printf("here");
-        char input[100];
-        fscanf(f,"%s",input);
-        address *temp = parse(input);
-        if (temp == NULL) printf("Invalid input\n");
-        else print_info(temp);
-        address_free(temp);
-        fclose(f);
+    if(argc < 2){
+        printf("Usage: <program> <file_with_data.txt> ...");
+    } else{
+        for(int i =1;i < argc;++i){
+            FILE *f=fopen(argv[i],"r");
+            if(f!=NULL){
+                char input[100];
+                fscanf(f,"%s",input);
+                address *temp = parse(input);
+                printf("-Data from file %s:\n",argv[i]);
+                if (temp == NULL) printf("Invalid input\n");
+                else print_info(temp);
+                address_free(temp);
+                fclose(f);
+            } else printf("\n-file not found\n");
+        }
     }
+
+
 
     return 0;
 }
