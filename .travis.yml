@@ -24,7 +24,7 @@ script:
   - mkdir build
   - cd build
   - cmake ..
-#  - make
+  - make
 #  - make tests
 
 after_success:
