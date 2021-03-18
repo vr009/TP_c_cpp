@@ -91,7 +91,7 @@ TEST(addr, protocol_set_check3){
 const char * text = "file";
 struct address addr;
 int answer = set_protocol(text,strlen(text),&addr);
-EXPECT_EQ(answer,1;
+EXPECT_EQ(answer,1);
 ASSERT_EQ(0,strcmp("file",addr.protocol));
 free(addr.protocol);
 }
