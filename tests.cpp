@@ -26,15 +26,8 @@ ASSERT_EQ(addr,nullptr);
 address_free(addr);
 }
 
+
 TEST(addr, all3){
-const char * text = "ftp://mail.ruindex.html";
-struct address * addr = parse(text);
-ASSERT_EQ(addr,nullptr);
-address_free(addr);
-}
-
-
-TEST(addr, all4){
 const char * text = "https://yandex.ru/search/dr.txt";
 struct address * addr = parse(text);
 ASSERT_EQ(0,strcmp(addr->protocol,"https"));

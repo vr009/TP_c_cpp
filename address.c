@@ -173,6 +173,7 @@ address* parse(const char*input){
                 set_protocol(temp_protocol, pr_size, addr);
             } else{
                 address_free(addr);
+                free(temp_protocol);
                 return NULL;
             }
             free(temp_protocol);
@@ -193,7 +194,7 @@ address* parse(const char*input){
                 return NULL;
             }
             free(temp_url);
-            
+
             return addr;
         } else return NULL;
 
