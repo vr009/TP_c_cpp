@@ -171,11 +171,11 @@ address* parse(const char*input){
             if(protocol_is_valid(temp_protocol)){
                 size_t pr_size = strlen(temp_protocol);
                 set_protocol(temp_protocol, pr_size, addr);
-                free(temp_protocol);
             } else{
                 address_free(addr);
                 return NULL;
             }
+            free(temp_protocol);
 
             //set domain
             char * temp_domain = parse_domain(input, size_, strlen(addr->protocol)+3);
