@@ -43,14 +43,14 @@ address_free(addr);
 TEST(addr, protocol_parse_check1){
 const char * text = "http://mail.ru/index.html";
 char * answer = parse_protocol(text,strlen(text));
-EXPECT_EQ(answer,"http");
+ASSERT_EQ(0,strcmp("http",answer));
 free(answer);
 }
 
 TEST(addr, protocol_parse_check2){
 const char * text = "ftp://mail.ru/index.html";
 char * answer = parse_protocol(text,strlen(text));
-EXPECT_EQ(answer,"ftp");
+ASSERT_EQ(0,strcmp("ftp",answer));
 free(answer);
 }
 
