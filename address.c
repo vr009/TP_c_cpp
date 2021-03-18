@@ -192,7 +192,8 @@ address* parse(const char*input){
                 address_free(addr);
                 return NULL;
             }
-
+            free(temp_url);
+            
             return addr;
         } else return NULL;
 

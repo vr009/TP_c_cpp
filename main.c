@@ -17,7 +17,7 @@ int main(int argc, char**argv){
             FILE *f=fopen(argv[i],"r");
             if(f!=NULL){
                 char input[100];
-                fscanf(f,"%100s",input);
+                fscanf(f,"%99s",input);
                 address *temp = parse(input);
                 printf("-Data from file %s:\n",argv[i]);
                 if (temp == NULL) printf("Invalid input\n");
