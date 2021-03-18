@@ -49,7 +49,7 @@ char* parse_protocol(const char *input, size_t size_){
     } else return NULL;
 }
 
-int set_protocol(const char *input,size_t size_, address * addr){
+int set_protocol(const char *input, size_t size_, address * addr){
     if(input != NULL && addr != NULL){
         if(addr->protocol != NULL) free(addr->protocol);
 
@@ -63,14 +63,14 @@ int set_protocol(const char *input,size_t size_, address * addr){
 
 //======================URL==============================================
 
-char * parse_url(const char *input,size_t size_, size_t start_index){
+char * parse_url(const char *input, size_t size_, size_t start_index){
     if(input != NULL && size_ - start_index > 0){
 
         size_t url_size = size_ - start_index;
         char * temp = (char*) malloc(url_size+1);
 
         if(temp != NULL){
-            memcpy(temp, input+start_index, url_size);
+            memcpy(temp, input + start_index, url_size);
             temp[url_size] = '\0';
         }
 
@@ -94,7 +94,7 @@ int set_url(const char *input, size_t size_, address * addr){
 
 //======================DOMAIN================================================
 
-char * parse_domain(const char *input,size_t size_, size_t start_index){
+char * parse_domain(const char *input, size_t size_, size_t start_index){
     size_t end_index = start_index;
 
     while (input[end_index] != '/' && end_index != size_ - 1){
@@ -102,7 +102,7 @@ char * parse_domain(const char *input,size_t size_, size_t start_index){
     }
     size_t dom_size = end_index - start_index;
 
-    char * temp = (char*)malloc(dom_size + 1);
+    char * temp = (char *)malloc(dom_size + 1);
     memcpy(temp, input + start_index, dom_size);
     temp[dom_size] = '\0';
 
@@ -152,7 +152,7 @@ int set_domain(const char *input, size_t size_, address * addr){
 
 //=================PARSER=====================================
 
-address* parse(const char*input){
+address* parse(const char *input){
     if(input!= NULL){
 
         size_t size_ = strlen(input);
@@ -201,7 +201,7 @@ address* parse(const char*input){
     } else return NULL;
 }
 
-void address_free(address * addr){
+void address_free(address *addr){
     
     if(addr!=NULL) {
 		if(addr->protocol!=NULL) free(addr->protocol);
@@ -217,7 +217,7 @@ void address_free(address * addr){
 	}
 }
 
-void print_info(address * addr){
+void print_info(address *addr){
     if(addr != NULL){
         printf("Protocol: %s\n", addr->protocol);
         printf("Sub-Domain: %s\n", addr->sub_domains);
