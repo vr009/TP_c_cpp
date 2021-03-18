@@ -71,14 +71,6 @@ free(answer);
 }
 
 
-//TEST(addr, protocol_set_check2){
-//const char * text = "ftp";
-//struct address addr;
-//int answer = set_protocol(text,strlen(text),&addr);
-//EXPECT_EQ(answer,1);
-//ASSERT_EQ(0,strcmp("ftp",addr.protocol));
-//free(addr.protocol);
-//}
 
 
 
