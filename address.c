@@ -92,30 +92,6 @@ int set_url(const char *input, size_t size_, address * addr){
     } else return 0;
 }
 
-/*int set_url(const char *input, size_t size_, address * addr){
-    if(input != NULL && addr!= NULL){
-
-        size_t url_size = 0;
-        size_t start_index = strlen(addr->protocol) + 3; // <protocol> + sizeof('://')
-
-        while ((input[start_index] != '/') & (input[start_index] != '\0')) {
-            ++start_index;
-        }
-
-        if (start_index == size_) return 0;
-
-        url_size = size_ - start_index;
-        addr->url = (char *) malloc(url_size + 1);
-
-        if(addr->url!=NULL){
-            memcpy(addr->url, input + (size_ - url_size), url_size);
-            addr->url[url_size] = '\0';
-            return 1;
-        } else return 0;
-
-    } else return 0;
-}*/
-
 //======================DOMAIN================================================
 
 char * parse_domain(const char *input,size_t size_, size_t start_index){

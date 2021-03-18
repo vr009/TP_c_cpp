@@ -64,7 +64,7 @@ free(answer);
 TEST(addr, protocol_validation_check1){
 const char * text = "http://mail.ru/index.html";
 char * answer = parse_protocol(text,strlen(text));
-int valid = protocol_validate(answer);
+int valid = protocol_is_valid(answer);
 EXPECT_EQ(1,valid);
 free(answer);
 }
@@ -72,7 +72,7 @@ free(answer);
 TEST(addr, protocol_validation_check2){
 const char * text = "htp://mail.ru/index.html";
 char * answer = parse_protocol(text,strlen(text));
-int valid = protocol_validate(answer);
+int valid = protocol_is_valid(answer);
 EXPECT_EQ(0,valid);
 free(answer);
 }
