@@ -71,23 +71,15 @@ free(answer);
 }
 
 
-TEST(addr, protocol_set_check2){
-const char * text = "ftp";
-struct address addr;
-int answer = set_protocol(text,strlen(text),&addr);
-EXPECT_EQ(answer,1);
-ASSERT_EQ(0,strcmp("ftp",addr.protocol));
-free(addr.protocol);
-}
+//TEST(addr, protocol_set_check2){
+//const char * text = "ftp";
+//struct address addr;
+//int answer = set_protocol(text,strlen(text),&addr);
+//EXPECT_EQ(answer,1);
+//ASSERT_EQ(0,strcmp("ftp",addr.protocol));
+//free(addr.protocol);
+//}
 
-TEST(addr, protocol_set_check3){
-const char * text = "file";
-struct address addr;
-int answer = set_protocol(text,strlen(text),&addr);
-EXPECT_EQ(answer,1);
-ASSERT_EQ(0,strcmp("file",addr.protocol));
-free(addr.protocol);
-}
 
 
 int main(int argc, char**argv){
