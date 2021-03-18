@@ -44,7 +44,7 @@ install:
 script:
   - cmake .
   - make || travis_terminate 1
-  - cppcheck *.c --enable-all --verbose
+  - cppcheck *.c --enable=all --verbose
   - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./iz1_task ./test/correct_data.txt || travis_terminate 1
   - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./iz1_task ./test/incorrect_data.txt || travis_terminate 1
   - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./iz1_task ./test/not_real_file.txt || travis_terminate 1
