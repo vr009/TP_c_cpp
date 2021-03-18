@@ -12,8 +12,8 @@ struct address{
 };
 typedef struct address address;
 
-
-int protocol_validate(const char * protocol){
+//==================PROTOCOL=PARSING===========================================
+int protocol_is_valid(const char * protocol){
     if(protocol != NULL){
         if(strcmp(protocol, "http") == 0) return 1;
         if(strcmp(protocol, "https") == 0) return 1;
@@ -26,36 +26,87 @@ int protocol_validate(const char * protocol){
     } else return 0;
 }
 
-int set_protocol(const char *input,size_t size_,address * addr){
-    if(input != NULL && addr!= NULL){
+char* parse_protocol(const char *input, size_t size_){
+    if(input != NULL && size_!= 0){
+
         size_t pr_size = 0;
         while ((pr_size+2 < size_)  & (input[pr_size] != ':') ) {
             pr_size++;
         }
+
         if (pr_size > size_-3) return 0;
 		if ( input[pr_size + 1] != '/' || input[pr_size + 2] != '/') return 0;
-        addr->protocol = (char *) malloc(pr_size + 1);
-		if(addr->protocol!=NULL){
-            memcpy(addr->protocol, input, pr_size);
-            addr->protocol[pr_size] = '\0';
-            return protocol_validate(addr->protocol);
+
+		char * temp = (char *) malloc(pr_size + 1);
+
+		if(temp!=NULL){
+            memcpy(temp, input, pr_size);
+            temp[pr_size] = '\0';
+        }
+
+		return temp;
+
+    } else return NULL;
+}
+
+int set_protocol(const char *input,size_t size_, address * addr){
+    if(input != NULL && addr != NULL){
+        if(addr->protocol != NULL) free(addr->protocol);
+
+        addr->protocol = (char*)malloc(size_+1);
+        memcpy(addr->protocol, input, size_);
+        addr->protocol[size_] = '\0';
+        return 1;
+    }else
+        return 0;
+}
+
+//======================URL==============================================
+
+char * parse_url(const char *input,size_t size_, size_t start_index){
+    if(input != NULL && size_ - start_index > 0){
+
+        size_t url_size = size_ - start_index;
+        char * temp = (char*) malloc(url_size+1);
+
+        if(temp != NULL){
+            memcpy(temp, input+start_index, url_size);
+            temp[url_size] = '\0';
+        }
+
+        return temp;
+    } else return NULL;
+}
+
+int set_url(const char *input, size_t size_, address * addr){
+    if(input != NULL && addr!= NULL){
+
+        addr->url = (char *) malloc(size_ + 1);
+
+        if(addr->url!=NULL){
+            memcpy(addr->url, input, size_);
+            addr->url[size_] = '\0';
+            return 1;
         } else return 0;
 
     } else return 0;
 }
 
-
-int set_url(const char *input,size_t size_,address * addr){
+/*int set_url(const char *input, size_t size_, address * addr){
     if(input != NULL && addr!= NULL){
-        int url_size = 0;
+
+        size_t url_size = 0;
         size_t start_index = strlen(addr->protocol) + 3; // <protocol> + sizeof('://')
+
         while ((input[start_index] != '/') & (input[start_index] != '\0')) {
             ++start_index;
         }
+
         if (start_index == size_) return 0;
 
         url_size = size_ - start_index;
         addr->url = (char *) malloc(url_size + 1);
+
         if(addr->url!=NULL){
             memcpy(addr->url, input + (size_ - url_size), url_size);
             addr->url[url_size] = '\0';
@@ -63,66 +114,112 @@ int set_url(const char *input,size_t size_,address * addr){
         } else return 0;
 
     } else return 0;
+}*/
+
+//======================DOMAIN================================================
+
+char * parse_domain(const char *input,size_t size_, size_t start_index){
+    size_t end_index = start_index;
+
+    while (input[end_index] != '/' && end_index != size_ - 1){
+        ++end_index;
+    }
+    size_t dom_size = end_index - start_index;
+
+    char * temp = (char*)malloc(dom_size + 1);
+    memcpy(temp, input + start_index, dom_size);
+    temp[dom_size] = '\0';
+
+    return temp;
 }
 
-int set_domain(const char *input,size_t size_,address * addr){
-    if(input != NULL && addr!= NULL){
-        int dom_size = 0;
-        int domains_number = 0;
-        //interval between <protocol prefix> and url
-        size_t start_index = strlen(addr->protocol) + 3; // length of: <protocol prefix> + "://"
-        size_t end_index = size_ - strlen(addr->url) - 1;
 
-        for (size_t i = start_index; i < end_index; ++i) {
+
+int set_domain(const char *input, size_t size_, address * addr){
+    if(input != NULL && addr!= NULL){
+        int domains_number = 0;
+
+        for (size_t i = 0; i < size_; ++i) {
             if (input[i] == '.') domains_number++;
         }
-        if (domains_number == 0 || input[start_index] == '.') return 0;
 
+
+        if (domains_number == 0 || input[size_] == '.') return 0;
+
+        size_t end_index = size_;
+        size_t top_domain_size = 0;
         while (input[end_index] != '.') {
-            dom_size++;
-            end_index--;
+            ++top_domain_size;
+            --end_index;
         }
 
-        addr->top_level_domain = (char *) malloc(dom_size + 2);
-        addr->sub_domains = (char *)malloc(end_index - start_index + 1);
-        if(addr->top_level_domain && addr->sub_domains){
-            memcpy(addr->top_level_domain, input + end_index, dom_size+1);
-            addr->top_level_domain[dom_size+1] = '\0';
-            memcpy(addr->sub_domains, input + start_index, end_index - start_index);
-            addr->sub_domains[end_index - start_index] = '\0';
+        addr->top_level_domain = (char *) malloc( top_domain_size+ 2);
+        if(addr->top_level_domain != NULL){
+
+            memcpy(addr->top_level_domain, input + end_index, top_domain_size+1);
+            addr->top_level_domain[top_domain_size+1] = '\0';
+
+        } else return 0;
+
+
+        addr->sub_domains = (char *)malloc(end_index + 1);
+        if(addr->sub_domains != NULL){
+
+            memcpy(addr->sub_domains, input, end_index);
+            addr->sub_domains[end_index] = '\0';
+
             return 1;
         } else return 0;
-        //TODO validation
+
     } else return 0;
 }
 
+//=================PARSER=====================================
 
 address* parse(const char*input){
     if(input!= NULL){
-        int size_ = strlen(input);
+
+        size_t size_ = strlen(input);
         if(size_>0){
+
             address *addr = (address *) malloc(sizeof(struct address));
+
             addr->protocol = NULL;
             addr->url=NULL;
             addr->sub_domains = NULL;
             addr->top_level_domain = NULL;
-            //get protocol
-            if (!set_protocol(input, size_, addr)){
-				 address_free(addr);
-				 return NULL;
-			 }
-            // get url
-            if (!set_url(input, size_, addr)){
-				 address_free(addr);
-				 return NULL;
-			 }
-            //get domain
-            if (!set_domain(input, size_, addr)){
-				 address_free(addr);
-				 return NULL;
-			 }
+
+            //set protocol
+            char * temp_protocol = parse_protocol(input,size_);
+
+            if(protocol_is_valid(temp_protocol)){
+                size_t pr_size = strlen(temp_protocol);
+                set_protocol(temp_protocol, pr_size, addr);
+                free(temp_protocol);
+            } else{
+                address_free(addr);
+                return NULL;
+            }
+
+            //set domain
+            char * temp_domain = parse_domain(input, size_, strlen(addr->protocol)+3);
+            if(set_domain(temp_domain, strlen(temp_domain), addr) == 0){
+                address_free(addr);
+                return NULL;
+            }
+            free(temp_domain);
+
+            // set url
+            size_t url_index = strlen(addr->protocol)+ strlen("://") + strlen(addr->sub_domains) + strlen(addr->top_level_domain) ;
+            char * temp_url = parse_url(input,size_,url_index);
+            if (set_url(temp_url, strlen(temp_url), addr) != 1){
+                address_free(addr);
+                return NULL;
+            }
+
             return addr;
         } else return NULL;
+
     } else return NULL;
 }
 

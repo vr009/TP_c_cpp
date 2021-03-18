@@ -10,9 +10,16 @@
 struct address;
 typedef struct address address;
 
-int set_protocol(const char *,size_t ,address *);
-int set_url(const char *,size_t,address * );
+char * parse_protocol(const char *,size_t );
+int protocol_is_valid(const char *);
+int set_protocol(const char *, size_t, address *);
+
+char * parse_url(const char *, size_t, size_t);
+int set_url(const char *, size_t, address * );
+
+char * parse_domain(const char *, size_t, size_t);
 int set_domain(const char *,size_t ,address *);
+
 address* parse(const char*);
 
 void print_info(address *);

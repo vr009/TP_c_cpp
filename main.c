@@ -10,7 +10,7 @@
 
 int main(int argc, char**argv){
 
-    if(argc < 2){
+    /*if(argc < 2){
         printf("Usage: <program> <file_with_data.txt> ...");
     } else{
         for(int i =1;i < argc;++i){
@@ -26,8 +26,16 @@ int main(int argc, char**argv){
                 fclose(f);
             } else printf("\n-file not found\n");
         }
-    }
+    }*/
 
+
+    char input[100];
+    scanf("%s",input);
+    address *temp = parse(input);
+    //printf("-Data from file %s:\n",argv[i]);
+    if (temp == NULL) printf("Invalid input\n");
+    else print_info(temp);
+    address_free(temp);
 
 
     return 0;
