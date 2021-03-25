@@ -44,6 +44,7 @@ char* parse_protocol(const char *input, size_t size_){
             temp[pr_size] = '\0';
         }
 
+
 		return temp;
 
     } else return NULL;
@@ -204,14 +205,26 @@ address* parse(const char *input){
 void address_free(address *addr){
     
     if(addr!=NULL) {
-		if(addr->protocol!=NULL) free(addr->protocol);
-		addr->protocol = NULL;
-		if(addr->url!=NULL) free(addr->url);
-		addr->url = NULL;
-		if(addr->sub_domains!=NULL) free(addr->sub_domains);
-		addr->sub_domains=NULL;
-		if(addr->top_level_domain !=NULL) free(addr->top_level_domain);
-		addr->top_level_domain=NULL;
+		if(addr->protocol != NULL){
+            free(addr->protocol);
+            addr->protocol = NULL;
+		}
+
+		if(addr->url != NULL) {
+            free(addr->url);
+            addr->url = NULL;
+        }
+
+		if(addr->sub_domains != NULL) {
+            free(addr->sub_domains);
+            addr->sub_domains = NULL;
+        }
+
+		if(addr->top_level_domain != NULL) {
+            free(addr->top_level_domain);
+            addr->top_level_domain = NULL;
+        }
+
 		free(addr);
 		addr = NULL;
 	}

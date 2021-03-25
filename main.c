@@ -12,21 +12,37 @@ int main(int argc, char**argv){
 
     if(argc < 2){
         printf("Usage: <program> <file_with_data.txt> ...");
-    } else{
-        for(int i =1;i < argc;++i){
-            FILE *f=fopen(argv[i],"r");
-            if(f!=NULL){
-                char input[100];
-                fscanf(f,"%99s",input);
-                address *temp = parse(input);
-                printf("-Data from file %s:\n",argv[i]);
-                if (temp == NULL) printf("Invalid input\n");
-                else print_info(temp);
-                address_free(temp);
-                fclose(f);
-            } else printf("\n-file not found\n");
-        }
+        return 0;
     }
+
+    for(int i = 1; i < argc; ++i) {
+
+        FILE *f = fopen(argv[i], "r");
+
+        if (f != NULL) {
+
+            char input[100];
+            fscanf(f, "%99s", input);
+
+            address *temp = parse(input);
+
+            printf("-Data from file %s:\n", argv[i]);
+
+            if (temp == NULL) {
+                printf("Invalid input\n");
+            } else {
+                print_info(temp);
+            }
+
+            address_free(temp);
+            fclose(f);
+
+        } else {
+            printf("\n-file not found\n");
+        }
+
+    }
+
 
 
     return 0;
