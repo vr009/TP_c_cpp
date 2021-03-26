@@ -8,11 +8,15 @@
 
 #include <stdio.h>
 #include "libs/simple/maxsubseq.h"
-
+#include <string.h>
 
 
 int main(int argc, char **argv){
+    char * input = "abcdersdfsa";
+    size_t size = strlen(input);
 
+    substr_d * temp = max_subseq(input,size);
 
+    printf("%d %d\n", temp->substr_size, temp->index);
     return 0;
 }
