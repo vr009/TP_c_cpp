@@ -16,7 +16,7 @@ int check_symbol(char * text, size_t start_index,size_t end_index, char symbol){
             return i;
     }
 
-    return 0;
+    return -1;
 }
 
 
@@ -26,7 +26,7 @@ substr_d * get_des(char * input, size_t input_size, size_t start_i){
     size_t temp_size = 0;
 
     size_t i = start_i;
-    while( check_symbol(temp,0,temp_size,input[i]) == 0 && i < input_size){
+    while( check_symbol(temp,0,temp_size,input[i]) == -1 && i < input_size){
 
         ++temp_size;
         temp[i - start_i] = input[i];
@@ -49,9 +49,9 @@ substr_d * max_subseq(char * input, size_t size){
     substr_d * base = get_des(input, size, 0);
     size_t current_i = base->substr_size + base->index;
 
-    while(current_i != size - 1){
+    while(current_i != size){
         substr_d * temp = get_des(input, size, current_i);
-        current_i = temp->index + temp->substr_size - 1;
+        current_i = temp->index + temp->substr_size;
 
         if( temp->substr_size > base->substr_size ){
             free(base);

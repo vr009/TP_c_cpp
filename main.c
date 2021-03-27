@@ -9,14 +9,23 @@
 #include <stdio.h>
 #include "libs/simple/maxsubseq.h"
 #include <string.h>
-
+#include <stdlib.h>
 
 int main(int argc, char **argv){
-    char * input = "abcdersdfsa";
+    char * input = "ekfnwierninornorsnveirnerifmweldkmwekefwefwf";
     size_t size = strlen(input);
 
     substr_d * temp = max_subseq(input,size);
 
     printf("%d %d\n", temp->substr_size, temp->index);
+
+
+    char * out = (char*)malloc(temp->substr_size+1);
+    memcpy(out, input + temp->index, temp->substr_size);
+    out[temp->substr_size] = '\0';
+    printf("%s\n", out);
+
+    free(out);
+    free(temp);
     return 0;
 }
