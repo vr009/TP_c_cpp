@@ -2,15 +2,14 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+
 /*char *strpbrk(const char *s, const char *accept);
  * - находит первое вхождение любого символа, перечисленного в accept*/
-
-
 
 typedef struct substr_descriptor substr_d;
 
 
-int check_symbol(char * text, size_t start_index,size_t end_index, char symbol){
+int check_symbol(const char * text, size_t start_index,size_t end_index, char symbol){
     for(size_t i = start_index; i <= end_index; ++i){
         if(text[i] == symbol )
             return i;
@@ -45,7 +44,6 @@ substr_d * get_des(char * input, size_t input_size, size_t start_i){
 
 substr_d * max_subseq(char * input, size_t size){
 
-
     substr_d * base = get_des(input, size, 0);
     size_t current_i = base->substr_size + base->index;
 
@@ -62,4 +60,53 @@ substr_d * max_subseq(char * input, size_t size){
     }
 
     return base;
+}
+
+
+//=============logic for a library trigger =================
+
+size_t char_counter(FILE * f){
+    fseek(f, 0, SEEK_SET);
+    size_t counter = 0;
+    while (f) {
+        char value;
+        if (fscanf(f, "%c", &value) == 1)
+            counter++;
+        if (feof(f))
+            break;
+    }
+
+    return counter;
+}
+
+
+
+
+int trigger(FILE *f){
+
+    size_t file_size = char_counter(f);
+    printf("%d\n", file_size);
+
+
+    char * input = (char*)malloc(file_size);
+
+    fseek(f, 0, SEEK_SET);
+    for (int i = 0; i < file_size; ++i) {
+        fscanf(f, "%c", &input[i]);
+    }
+
+    substr_d * temp = max_subseq(input,file_size);
+
+    printf("%d %d\n", temp->substr_size, temp->index);
+
+    char * out = (char*)malloc(temp->substr_size+1);
+    memcpy(out, input + temp->index, temp->substr_size);
+    out[temp->substr_size] = '\0';
+
+    printf("%s\n", out);
+
+    free(out);
+    free(temp);
+
+    return 0;
 }

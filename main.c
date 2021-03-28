@@ -12,20 +12,22 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv){
-    char * input = "ekfnwierninornorsnveirnerifmweldkmwekefwefwf";
-    size_t size = strlen(input);
 
-    substr_d * temp = max_subseq(input,size);
+    if(argc < 2){
+        printf("Usage <program> <input_data.txt>");
+        return 0;
+    }
 
-    printf("%d %d\n", temp->substr_size, temp->index);
 
+    FILE *f = fopen(argv[1], "r");
+    if(f != NULL){
 
-    char * out = (char*)malloc(temp->substr_size+1);
-    memcpy(out, input + temp->index, temp->substr_size);
-    out[temp->substr_size] = '\0';
-    printf("%s\n", out);
+        trigger(f);
 
-    free(out);
-    free(temp);
+        fclose(f);
+    } else {
+        printf("File not found\n");
+    }
+
     return 0;
 }
