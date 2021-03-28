@@ -18,13 +18,14 @@ int main(int argc, char **argv){
         return 0;
     }
 
-
     FILE *f = fopen(argv[1], "r");
     if(f != NULL){
 
-        trigger(f);
+        if( !trigger(f, stdout) )
+            printf("Some library trouble");
 
         fclose(f);
+
     } else {
         printf("File not found\n");
     }
