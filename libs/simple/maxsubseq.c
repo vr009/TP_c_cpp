@@ -2,65 +2,69 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+
+#include <sys/mman.h>
+
 // данная структура введена для простоты сравнения подпоследовательностей поле-индекс указывает на начало подпоследовательности
 struct substr_descriptor;
 
 typedef struct substr_descriptor substr_d;
 
-//проверка очередного символа в текущей подпоследовательности
-int check_symbol(const char * text, size_t start_index,size_t end_index, char symbol){
-    for(size_t i = start_index; i <= end_index; ++i){
-        if(text[i] == symbol )
-            return 1;
-    }
 
-    return -1;
-}
+// возвращаем размер неповторяющейся последовательнотси с текущего индекса(start_i) в массиве
+size_t get_des(char * input, size_t input_size, size_t start_i, size_t * next_index){
 
-
-// возвращаем неповторяющуюся подпоследовательность с текущего индекса(start_i) в массиве
-substr_d * get_des(char * input, size_t input_size, size_t start_i){
-
-    char temp[100];
+    char temp[100] = {};
     size_t temp_size = 0;
 
     size_t i = start_i;
-    while( check_symbol(temp,0,temp_size,input[i]) == -1 && i < input_size){
+    while( i <=  input_size){
 
-        ++temp_size;
-        temp[i - start_i] = input[i];
-        ++i;
+        if (strchr(temp, input[i]) == NULL && input[i] != '\n'){
+            temp[temp_size] = input[i];
+            ++temp_size;
+            ++i;
+        } else {
+            size_t j = temp_size;
+            while(temp[j] != input[i]){
+                --j;
+            }
+            *next_index = start_i + j + 1;
+            break;
+        }
 
     }
 
-    substr_d * out_descriptor = (substr_d*) malloc( sizeof(substr_d) );
-    out_descriptor->index = start_i;
-    out_descriptor->substr_size = temp_size + 1;
 
-    return out_descriptor;
+    return temp_size;
 }
 
 
-// функция возвращает дескриптор самой большой подпоследовательности в массиве
-substr_d * max_subseq(char * input, size_t input_size){
+// функция возвращает размер и дескриптор самой большой подпоследовательности в массиве
+size_t max_subseq(char * input, size_t input_size, substr_d * max){
 
-    substr_d * base = get_des(input, input_size, 0);
+    if(max == NULL) return 0;
 
-    size_t current_i = base->substr_size + base->index;                 // с текущего индекса будем считать очередной дескриптор подпоследовательности
+    size_t current_i = 0;
+    size_t next_i = 0;
 
-    while(current_i <= input_size){
-        substr_d * temp = get_des(input, input_size, current_i);
-        current_i = temp->index + temp->substr_size;
+    max->substr_size = 0;
+    max->index = 0;
 
-        if( temp->substr_size > base->substr_size ){                    // по дескрипторам символьных неповторяющихся подпоследовательностей определяем которая из них больше
-            free(base);
-            base = temp;
-        } else {
-            free(temp);
+    while(current_i < input_size){
+
+        size_t next_size = get_des(input, input_size, current_i, &next_i);
+
+        if(max->substr_size < next_size){
+            max->substr_size = next_size;
+            max->index = current_i;
         }
+
+        current_i = next_i;
+
     }
 
-    return base;
+    return max->substr_size;
 }
 
 
@@ -90,17 +94,7 @@ int64_t getFileSize(FILE *f){
 }
 
 
-
-void fill(FILE *f, char * input, size_t file_size){
-
-    fseek(f, 0, SEEK_SET);
-
-    for (int i = 0; i < file_size; ++i) {
-        fscanf(f, "%c", &input[i]);
-    }
-}
-
-//================================================
+//=======================================================================
 
 int trigger(FILE *f, FILE *fout){
 
@@ -108,20 +102,25 @@ int trigger(FILE *f, FILE *fout){
 
         size_t file_size = getFileSize(f);
 
-        char *input = (char *) malloc(file_size);
+        char * input = mmap(NULL, file_size, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
 
-        fill(f, input, file_size);
+        if ( input == NULL ) {
+            printf("Failed to map\n");
+            return 1;
+        }
 
-        substr_d *temp = max_subseq(input, file_size);
+        substr_d *temp = (substr_d *)malloc(sizeof(substr_d));
+
 
         char *out = (char *) malloc(temp->substr_size + 1);
-        strncpy(out, input + temp->index, temp->substr_size);
+        strncpy(out, input + temp->index , temp->substr_size);
 
         fprintf(fout, "%s\n", out);
 
         free(out);
         free(temp);
-        free(input);
+
+        munmap(input, file_size);
 
         return 1;
     } else

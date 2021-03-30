@@ -5,8 +5,6 @@
  * в тексте максимальной последовательности неповторяющихся символов.
  * */
 
-//C:\\\\Users\\\\slava\\\\Documents\\\\plusplus\\\\c_proj\\\\TP_c_cpp\\\\autotest.txt
-
 #include <stdio.h>
 //#include "libs/parallel/maxsubseq.h"
 #include "libs/simple/maxsubseq.h"
