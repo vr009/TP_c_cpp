@@ -1,7 +1,7 @@
 #include "maxsubseq.h"
 #include <stddef.h>
 #include <stdlib.h>
-
+#include <sys/stat.h>
 // данная структура введена для простоты сравнения подпоследовательностей поле-индекс указывает на начало подпоследовательности
 struct substr_descriptor;
 
@@ -35,7 +35,7 @@ substr_d * get_des(char * input, size_t input_size, size_t start_i){
 
     substr_d * out_descriptor = (substr_d*) malloc( sizeof(substr_d) );
     out_descriptor->index = start_i;
-    out_descriptor->substr_size = temp_size;
+    out_descriptor->substr_size = temp_size + 1;
 
     return out_descriptor;
 }
@@ -48,8 +48,7 @@ substr_d * max_subseq(char * input, size_t input_size){
 
     size_t current_i = base->substr_size + base->index;                 // с текущего индекса будем считать очередной дескриптор подпоследовательности
 
-    while(current_i != input_size){
-
+    while(current_i <= input_size){
         substr_d * temp = get_des(input, input_size, current_i);
         current_i = temp->index + temp->substr_size;
 
@@ -68,22 +67,28 @@ substr_d * max_subseq(char * input, size_t input_size){
 //=============logic for a library trigger =================
 
 // подсчет символов в файле
-size_t char_counter(FILE * f){
+int64_t getFileSize(FILE *f){
 
-    fseek(f, 0, SEEK_SET);
-    size_t counter = 0;
+    int64_t _file_size = 0;
 
-    while (f) {
-        char value;
-        if (fscanf(f, "%c", &value) == 1)
-            counter++;
+    struct stat _fileStatbuff;
+    int fd = fileno(f);
 
-        if (feof(f))
-            break;
+    if(fd == -1){
+        _file_size = -1;
     }
 
-    return counter;
+    else{
+        if ((fstat(fd, &_fileStatbuff) != 0) || (!S_ISREG(_fileStatbuff.st_mode))) {
+            _file_size = -1;
+        }
+        else{
+            _file_size = _fileStatbuff.st_size;
+        }
+    }
+    return _file_size;
 }
+
 
 
 void fill(FILE *f, char * input, size_t file_size){
@@ -100,7 +105,8 @@ void fill(FILE *f, char * input, size_t file_size){
 int trigger(FILE *f, FILE *fout){
 
     if( f != NULL && fout != NULL ){
-        size_t file_size = char_counter(f);
+
+        size_t file_size = getFileSize(f);
 
         char *input = (char *) malloc(file_size);
 
