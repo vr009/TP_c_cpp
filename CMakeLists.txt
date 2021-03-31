@@ -31,9 +31,9 @@ find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 message(${GTEST_LIBRARIES})
 
-add_executable(tests_simple ${CMAKE_CURRENT_BINARY_DIR}/../libs/simple/test_simple.cpp )
-add_executable(tests_parallel ${CMAKE_CURRENT_BINARY_DIR}/../libs/parallel/test_parallel.cpp )
-add_executable(tests_file_worker ${CMAKE_CURRENT_BINARY_DIR}/../libs/file_worker/test_file_worker.cpp )
+add_executable(tests_simple libs/simple/test_simple.cpp )
+add_executable(tests_parallel libs/parallel/test_parallel.cpp )
+add_executable(tests_file_worker libs/file_worker/test_file_worker.cpp )
 
 
 target_link_libraries(tests_simple ${GTEST_LIBRARIES} -lpthread)
