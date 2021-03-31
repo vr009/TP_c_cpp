@@ -2,13 +2,11 @@
 #include "gmock/gmock.h"
 
 extern "C"{
-#include "maxsubseq.h"
-#include "maxsubseq.c"
+#include "./maxsubseq.h"
+#include "./maxsubseq.c"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
 #include "../file_worker/file_worker.h"
 }
 

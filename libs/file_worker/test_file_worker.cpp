@@ -6,8 +6,8 @@ extern "C"{
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
-#include <sys/stat.h>
 #include "file_worker.h"
+#include "file_worker.c"
 }
 
 //===========COMPLEX SET======================================
