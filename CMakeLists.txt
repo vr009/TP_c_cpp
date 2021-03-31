@@ -11,6 +11,7 @@ add_library(FILE_WORKER STATIC libs/file_worker/file_worker.c)
 add_library(SUBSEQUENCE_STR_SIMPLE STATIC libs/simple/maxsubseq.c)
 add_library(SUBSEQUENCE_STR_PARALLEL SHARED libs/parallel/maxsubseq.c)
 
+
 file(COPY test/autotest.txt
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
