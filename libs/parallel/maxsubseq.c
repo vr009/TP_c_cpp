@@ -69,7 +69,7 @@ size_t max_subseq(char * input, size_t start ,size_t input_size, substr_d * max)
     max->substr_size = 0;
     max->index = start;
 
-    while(current_i < input_size){
+    while(current_i < start + input_size){
 
         size_t next_size = get_des(input, input_size, current_i, &next_i);
 
@@ -84,22 +84,6 @@ size_t max_subseq(char * input, size_t start ,size_t input_size, substr_d * max)
 
     return max->substr_size;
 }
-
-
-size_t merge(char * input, size_t left, size_t right, substr_d * result){
-
-    size_t m = (left + right )/2;
-    size_t temp_size = max_subseq(input, left,right - left, result);
-
-    if(temp_size > m - left + 1 && temp_size > right-m){
-        return temp_size;
-    } else
-        return 0;
-
-}
-
-
-
 
 
 
@@ -137,11 +121,11 @@ int MT_trigger(FILE *f, FILE *fout){
 
         size_t file_size = getFileSize(f);
 
-        size_t process = sysconf(_SC_NPROCESSORS_ONLN);
+        size_t process = sysconf(_SC_NPROCESSORS_ONLN) % (file_size - 1);
         if (process <= 0) {
             return -1;
         }
-
+        process = 1 ;
 
         // загружаем файл в память
         char * shared_input = mmap(NULL, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
@@ -196,9 +180,10 @@ int MT_trigger(FILE *f, FILE *fout){
         for(size_t i = 1; i < process; ++i){
 
             size_t a = 0;
-            size_t left_side = get_right_des(shared_input, section_size, i * section_size);
-            size_t right_side = get_des(shared_input, section_size, i * section_size + 1, &a);
-            merge(shared_input,  left_side, i * section_size +right_side, &shared_merged_buffer[i -1]);
+            size_t left_index = section_size * i - get_right_des(shared_input, section_size, i * section_size);
+            size_t right_index = get_des(shared_input, section_size, i * section_size + 1, &a);
+
+            max_subseq(shared_input, left_index , right_index, &shared_merged_buffer[i - 1]);
 
         }
 
@@ -209,16 +194,18 @@ int MT_trigger(FILE *f, FILE *fout){
                 max = i;
         }
 
+
         size_t merge_max = 0;
         for(size_t i = 1; i < process ; ++i){
-            if( shared_merged_buffer[i].substr_size > shared_merged_buffer[max].substr_size )
+
+            if( shared_merged_buffer[i].substr_size > shared_merged_buffer[merge_max].substr_size )
                 merge_max = i;
+
         }
 
 
-        if(shared_merged_buffer[merge_max].substr_size > shared_max_buffer[max].substr_size){
+        if( process > 1 && shared_merged_buffer[merge_max].substr_size > shared_max_buffer[max].substr_size){
             shared_max_buffer[max] = shared_merged_buffer[merge_max];
-
         }
 
 
