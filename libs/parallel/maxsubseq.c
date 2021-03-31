@@ -18,13 +18,13 @@ size_t get_des(char * input, size_t input_size, size_t start_i, size_t * next_in
     size_t temp_size = 0;
 
     size_t i = start_i;
-    while( i <=  input_size + start_i ){
+    while( i <  input_size + start_i ){
 
         if (strchr(temp, input[i]) == NULL && input[i] != '\n'){
             temp[temp_size] = input[i];
             ++temp_size;
             ++i;
-            *next_index = temp_size;
+            *next_index = i + 1;
         } else {
             size_t j = temp_size - 1 ;
 
@@ -37,6 +37,7 @@ size_t get_des(char * input, size_t input_size, size_t start_i, size_t * next_in
         }
 
     }
+
 
     return temp_size;
 }
@@ -74,7 +75,7 @@ size_t max_subseq(char * input, size_t start ,size_t input_size, substr_d * max)
     max->substr_size = 0;
     max->index = start;
 
-    while(current_i < start + input_size){
+    while(current_i < input_size && input[current_i] != '\n'){
 
         size_t next_size = get_des(input, input_size, current_i, &next_i);
 
@@ -104,6 +105,7 @@ char * MT_trigger( char * shared_input, size_t file_size ){
         }
 
 
+
         //создаем область для общего хранения дескрипторов
         substr_d *shared_max_buffer = (substr_d*)mmap(NULL, sizeof(substr_d) * process , PROT_READ | PROT_WRITE,
                                                   MAP_SHARED | MAP_ANONYMOUS, -1, 0);
@@ -119,7 +121,9 @@ char * MT_trigger( char * shared_input, size_t file_size ){
             return NULL;
         }
 
-        size_t section_size = (file_size - 2)/process;
+
+        size_t section_size = (file_size)/process;
+
 
         for (size_t i = 0; i < process; ++i) {
 
@@ -136,7 +140,8 @@ char * MT_trigger( char * shared_input, size_t file_size ){
             if (pid == 0) {
                 //разбить на несколько частей массив
                 //для каждой части запустить поток
-                max_subseq(shared_input, i*section_size ,section_size , &shared_max_buffer[i]);
+
+                max_subseq(shared_input, i*section_size  ,section_size , &shared_max_buffer[i]);
 
                 exit(EXIT_SUCCESS);
             }
@@ -145,15 +150,18 @@ char * MT_trigger( char * shared_input, size_t file_size ){
         //проверяем все процессы
         int status = 0;
         for (size_t i = 0; i < process; ++i) {
+
             wait(&status);
         }
+
 
         //merge section
         for(size_t i = 1; i < process; ++i){
 
             size_t a = 0;
             size_t left_index = section_size * i - get_right_des(shared_input, section_size, i * section_size);
-            size_t right_index = get_des(shared_input, section_size, i * section_size + 1, &a);
+
+            size_t right_index = section_size * i + get_des(shared_input, file_size - section_size*i , i * section_size + 1, &a);
 
             max_subseq(shared_input, left_index , right_index + 1, &shared_merged_buffer[i - 1]);
 
@@ -164,6 +172,8 @@ char * MT_trigger( char * shared_input, size_t file_size ){
         for(size_t i = 1; i < process ; ++i){
             if( shared_max_buffer[i].substr_size > shared_max_buffer[max].substr_size )
                 max = i;
+
+
         }
 
 
@@ -192,3 +202,4 @@ char * MT_trigger( char * shared_input, size_t file_size ){
     } else
         return NULL;
 }
+

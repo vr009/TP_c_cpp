@@ -74,7 +74,7 @@ char * trigger(char * input,size_t file_size){
 
         substr_d *temp = (substr_d *)malloc(sizeof(substr_d));
 
-        max_subseq(input, file_size - 1, temp);
+        max_subseq(input, file_size , temp);
 
         char *out = (char *) malloc(temp->substr_size + 1);
         strncpy(out, input + temp->index , temp->substr_size);

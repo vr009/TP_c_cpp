@@ -9,37 +9,12 @@
 
 #include <dlfcn.h> //для работы с динамической библиотекой
 #include <stdio.h>
-//#include "libs/parallel/maxsubseq.h"
-#include "libs/simple/maxsubseq.h"
-#include <string.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 #include <sys/mman.h>
 #include <time.h>
 
-
-// подсчет символов в файле
-int64_t getFileSize(FILE *f){
-
-    int64_t _file_size = 0;
-
-    struct stat _fileStatbuff;
-    int fd = fileno(f);
-
-    if(fd == -1){
-        _file_size = -1;
-    }
-
-    else{
-        if ((fstat(fd, &_fileStatbuff) != 0) || (!S_ISREG(_fileStatbuff.st_mode))) {
-            _file_size = -1;
-        }
-        else{
-            _file_size = _fileStatbuff.st_size;
-        }
-    }
-    return _file_size;
-}
+#include "libs/simple/maxsubseq.h"
+#include "libs/file_worker/file_worker.h"
 
 
 
@@ -70,6 +45,7 @@ int main(int argc, char **argv){
         start_t = clock();
 
         char * output = trigger(input, file_size - 1);
+
         if(output != NULL)
             printf("Simple implementation's answer: %s\n", output);
         else
@@ -103,7 +79,10 @@ int main(int argc, char **argv){
         start_t = clock();
 
         output = mt_trigger(input, file_size);
-        printf("Parallel implementation's result: %s\n", output);
+        if(output != NULL)
+            printf("Parallel implementation's result: %s\n", output);
+        else
+            printf("Empty string\n");
 
         end_t = clock();
 
