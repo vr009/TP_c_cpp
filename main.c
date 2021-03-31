@@ -23,7 +23,7 @@
 int main(int argc, char **argv){
 
     if(argc < 2){
-        printf("Usage <program> <input_data.txt>");
+        printf("Usage <program> <input_data.txt>\n");
         return 0;
     }
 

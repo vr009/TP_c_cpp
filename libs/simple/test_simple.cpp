@@ -20,8 +20,8 @@ FILE * f = fopen(file_name, "r");
 size_t file_size = getFileSize(f);
 
 if (f != NULL){
-    char * input = mmap(NULL, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
-    char * answer = MT_trigger(input, file_size - 1);
+char * input = mmap(NULL, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
+char * answer = MT_trigger(input, file_size - 1);
 }
 
 ASSERT_EQ(0, strcmp(answer, "saliutrewqkdjfhg["));
