@@ -9,7 +9,7 @@ extern "C"{
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
-#include "file_worker.h"
+#include "../file_worker/file_worker.h"
 }
 
 //===========COMPLEX SET======================================
@@ -19,14 +19,13 @@ const char * file_name = "../../test/autotest.txt";
 FILE * f = fopen(file_name, "r");
 size_t file_size = getFileSize(f);
 
-if (f != NULL){
-    char * input = mmap(NULL, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
+if (f != nullptr){
+    char * input = (char*)mmap(nullptr, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
     char * answer = MT_trigger(input, file_size - 1);
+    ASSERT_EQ(0, strcmp(answer, "saliutrewqkdjfhg["));
+    munmap(input, file_size - 1);
 }
 
-ASSERT_EQ(0, strcmp(answer, "saliutrewqkdjfhg["));
-
-unmap(input, file_size - 1);
 fclose(f);
 }
 
@@ -36,14 +35,15 @@ const char * file_name = "../../test/simple_test.txt";
 FILE * f = fopen(file_name, "r");
 size_t file_size = getFileSize(f);
 
-if (f != NULL){
-char * input = mmap(NULL, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
-char * answer = MT_trigger(input, file_size - 1);
+if (f != nullptr){
+    char * input = (char*)mmap(nullptr, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
+
+    char * answer = MT_trigger(input, file_size - 1);
+
+    ASSERT_EQ(0, strcmp(answer, "qwertyuiopasdfghjklzxcvbnm"));
+    munmap(input, file_size - 1);
 }
 
-ASSERT_EQ(0, strcmp(answer, "qwertyuiopasdfghjklzxcvbnm"));
-
-unmap(input, file_size - 1);
 fclose(f);
 }
 
@@ -54,14 +54,14 @@ const char * file_name = "../../test/aaa.txt";
 FILE * f = fopen(file_name, "r");
 size_t file_size = getFileSize(f);
 
-if (f != NULL){
-char * input = mmap(NULL, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
-char * answer = MT_trigger(input, file_size - 1);
+if (f != nullptr){
+    char * input = (char*)mmap(nullptr, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
+    char * answer = MT_trigger(input, file_size - 1);
+    ASSERT_EQ(0, strcmp(answer, "a"));
+    munmap(input, file_size - 1);
 }
 
-ASSERT_EQ(0, strcmp(answer, "a"));
 
-unmap(input, file_size - 1);
 fclose(f);
 }
 

@@ -2,8 +2,6 @@
 #include "gmock/gmock.h"
 
 extern "C"{
-#include "maxsubseq.h"
-#include "maxsubseq.c"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,7 +22,7 @@ ASSERT_EQ(35, file_size);
 fclose(f);
 }
 
-TEST(full, all1){
+TEST(full, all2){
 const char * file_name = "../../test/autotest.txt";
 
 FILE * f = fopen(file_name, "r");
