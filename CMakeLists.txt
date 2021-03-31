@@ -37,10 +37,12 @@ add_executable(tests_file_worker libs/file_worker/test_file_worker.cpp )
 
 
 target_link_libraries(tests_simple ${GTEST_LIBRARIES} -lpthread)
-target_link_libraries(tests_simple  address_lib)
+target_link_libraries(tests_simple  SUBSEQUENCE_STR_SIMPLE)
+target_link_libraries(tests_simple FILE_WORKER)
 
 target_link_libraries(tests_parallel ${GTEST_LIBRARIES} -lpthread)
-target_link_libraries(tests_parallel address_lib)
+target_link_libraries(tests_parallel SUBSEQUENCE_STR_PARALLEL)
+target_link_libraries(tests_parallel FILE_WORKER)
 
 target_link_libraries(tests_file_worker ${GTEST_LIBRARIES} -lpthread)
-target_link_libraries(tests_file_worker address_lib)
+target_link_libraries(tests_file_worker FILE_WORKER)
