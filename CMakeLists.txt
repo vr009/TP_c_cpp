@@ -32,7 +32,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 message(${GTEST_LIBRARIES})
 
 add_executable(tests_simple libs/simple/test_simple.cpp )
-add_executable(tests_parallel libs/parallel/test_parallel.cpp )
+#add_executable(tests_parallel libs/parallel/test_parallel.cpp )
 add_executable(tests_file_worker libs/file_worker/test_file_worker.cpp )
 
 
