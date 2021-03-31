@@ -5,7 +5,6 @@
 #include <sys/mman.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <sys/stat.h>
 
 struct substr_descriptor;
 
@@ -25,12 +24,14 @@ size_t get_des(char * input, size_t input_size, size_t start_i, size_t * next_in
             temp[temp_size] = input[i];
             ++temp_size;
             ++i;
-            *next_index = i;
+            *next_index = temp_size;
         } else {
-            size_t j = temp_size;
-            while(temp[j] != input[i] && j > start_i){
+            size_t j = temp_size - 1 ;
+
+            while(temp[j] != input[i] && j > 0){
                 --j;
             }
+
             *next_index = start_i + j + 1;
             break;
         }
@@ -39,6 +40,10 @@ size_t get_des(char * input, size_t input_size, size_t start_i, size_t * next_in
 
     return temp_size;
 }
+
+
+// данная функция понадобилась для того чтобы получить размер неповторяющейся последовательности для правой границы подмассива
+// используется при мердже граничных подмассивов
 
 size_t get_right_des(char * input, size_t input_size, size_t end_i){
 
@@ -86,48 +91,18 @@ size_t max_subseq(char * input, size_t start ,size_t input_size, substr_d * max)
 }
 
 
-
-//=============logic for a library trigger =================
-
-
-int64_t getFileSize(FILE *f){
-
-    int64_t _file_size = 0;
-
-    struct stat _fileStatbuff;
-    int fd = fileno(f);
-
-    if(fd == -1){
-        _file_size = -1;
-    }
-
-    else{
-        if ((fstat(fd, &_fileStatbuff) != 0) || (!S_ISREG(_fileStatbuff.st_mode))) {
-            _file_size = -1;
-        }
-        else{
-            _file_size = _fileStatbuff.st_size;
-        }
-    }
-    return _file_size;
-}
+//=====================================================================================
 
 
-//================================================
+char * MT_trigger( char * shared_input, size_t file_size ){
 
-
-int MT_trigger(FILE *f, FILE *fout){
-    if( f != NULL && fout != NULL ){
-
-        size_t file_size = getFileSize(f);
+    if( shared_input != NULL ){
 
         size_t process = sysconf(_SC_NPROCESSORS_ONLN) % (file_size - 1);
         if (process <= 0) {
-            return -1;
+            return NULL;
         }
 
-        // загружаем файл в память
-        char * shared_input = mmap(NULL, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
 
         //создаем область для общего хранения дескрипторов
         substr_d *shared_max_buffer = (substr_d*)mmap(NULL, sizeof(substr_d) * process , PROT_READ | PROT_WRITE,
@@ -139,10 +114,9 @@ int MT_trigger(FILE *f, FILE *fout){
                                                       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
 
-
         if ( shared_input == NULL || shared_max_buffer == NULL || shared_merged_buffer == NULL ) {
             printf("Failed to map\n");
-            return 1;
+            return NULL;
         }
 
         size_t section_size = (file_size - 2)/process;
@@ -152,10 +126,10 @@ int MT_trigger(FILE *f, FILE *fout){
             int pid = fork();
             //не вышло
             if (pid == -1) {
-                munmap(shared_input, file_size - 1);
+
                 munmap(shared_max_buffer, sizeof(substr_d) * process);
                 munmap(shared_merged_buffer, sizeof(substr_d) * (process - 1));
-                return -1;
+                return NULL;
             }
 
             //вышло, мы в потомке
@@ -181,7 +155,7 @@ int MT_trigger(FILE *f, FILE *fout){
             size_t left_index = section_size * i - get_right_des(shared_input, section_size, i * section_size);
             size_t right_index = get_des(shared_input, section_size, i * section_size + 1, &a);
 
-            max_subseq(shared_input, left_index , right_index, &shared_merged_buffer[i - 1]);
+            max_subseq(shared_input, left_index , right_index + 1, &shared_merged_buffer[i - 1]);
 
         }
 
@@ -209,17 +183,12 @@ int MT_trigger(FILE *f, FILE *fout){
 
         char *out = (char *) malloc(shared_max_buffer[max].substr_size + 1);
         strncpy(out, shared_input + shared_max_buffer[max].index, shared_max_buffer[max].substr_size );
-        out[shared_max_buffer[max].substr_size] = '\0';
 
-        fprintf(fout, "%s\n", out);
 
-        free(out);
-
-        munmap(shared_input, file_size);
         munmap(shared_max_buffer, sizeof(substr_d) * process );
         munmap(shared_merged_buffer, sizeof(substr_d) * (process - 1) );
 
-        return 1;
+        return out;
     } else
-        return 0;
+        return NULL;
 }
