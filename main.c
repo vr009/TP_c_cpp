@@ -6,8 +6,8 @@
  * */
 
 #include <stdio.h>
-//#include "libs/parallel/maxsubseq.h"
-#include "libs/simple/maxsubseq.h"
+#include "libs/parallel/maxsubseq.h"
+//#include "libs/simple/maxsubseq.h"
 #include <string.h>
 #include <stdlib.h>
 

@@ -3,57 +3,51 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/mman.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 
 struct substr_descriptor;
 
 typedef struct substr_descriptor substr_d;
 
-//проверка очередного символа в текущей подпоследовательности
-int check_symbol(const char * text, size_t start_index,size_t end_index, char symbol){
-    for(size_t i = start_index; i <= end_index; ++i){
-        if(text[i] == symbol )
-            return 1;
-    }
 
-    return -1;
-}
+// возвращаем размер неповторяющейся последовательнотси с текущего индекса(start_i) в массиве
+size_t get_des(char * input, size_t input_size, size_t start_i, size_t * next_index){
 
-
-// возвращаем неповторяющуюся подпоследовательность с текущего индекса(start_i) в массиве
-substr_d * get_des(char * input, size_t input_size, size_t start_i){
-
-    char temp[100];
+    char temp[100] = {};
     size_t temp_size = 0;
 
     size_t i = start_i;
-    while( check_symbol(temp,0,temp_size,input[i]) == -1 && i < start_i + input_size){
+    while( i <=  input_size){
 
-        ++temp_size;
-        temp[i - start_i] = input[i];
-        ++i;
+        if (strchr(temp, input[i]) == NULL && input[i] != '\n'){
+            temp[temp_size] = input[i];
+            ++temp_size;
+            ++i;
+            *next_index = i;
+        } else {
+            size_t j = temp_size;
+            while(temp[j] != input[i] && j > start_i){
+                --j;
+            }
+            *next_index = start_i + j + 1;
+            break;
+        }
 
     }
 
-    substr_d * out_descriptor = (substr_d*) malloc( sizeof(substr_d) );
 
-    out_descriptor->index = start_i;
-    out_descriptor->substr_size = temp_size + 1;
-
-    return out_descriptor;
+    return temp_size;
 }
 
-substr_d * get_right_des(char * input, size_t input_size, size_t end_i){
+size_t get_right_des(char * input, size_t input_size, size_t end_i){
 
-    char temp[100];
+    char temp[100] = {};
     size_t temp_size = 0;
 
     size_t i = end_i ;
-    while( check_symbol(temp,0,temp_size,input[i]) == -1 && i >= end_i - input_size+1 ){
+    while( strchr(temp, input[i]) == NULL && i >= end_i - input_size+1 ){
 
         ++temp_size;
         temp[end_i - i] = input[i];
@@ -61,55 +55,54 @@ substr_d * get_right_des(char * input, size_t input_size, size_t end_i){
 
     }
 
-    substr_d * out_descriptor = (substr_d*) malloc( sizeof(substr_d) );
-    out_descriptor->index = end_i - input_size + 1;
-    out_descriptor->substr_size = temp_size;
-
-    return out_descriptor;
+    return temp_size;
 }
 
 
+// функция возвращает размер и дескриптор самой большой подпоследовательности в массиве
+size_t max_subseq(char * input, size_t start ,size_t input_size, substr_d * max){
 
+    if(max == NULL) return 0;
 
+    size_t current_i = start;
+    size_t next_i = start;
 
-substr_d * merge(char * input, substr_d * left, substr_d * right){
+    max->substr_size = 0;
+    max->index = start;
 
-    substr_d * temp = max_subseq(input,left->index, right->index + right->substr_size - 1);
+    while(current_i < input_size){
 
-    if(temp->substr_size > left->substr_size && temp->substr_size > right->substr_size){
-        return temp;
-    } else {
+        size_t next_size = get_des(input, input_size, current_i, &next_i);
 
-        free(temp);
-        return NULL;
-    }
+        //printf("%d %d\n %d \n", current_i, input_size, start);
 
-}
-
-
-
-// функция возвращает дескриптор самой большой подпоследовательности в массиве
-substr_d * max_subseq(char * input, size_t start_i, size_t input_size){
-
-    substr_d * base = get_des(input, input_size, start_i);
-
-    size_t current_i = base->substr_size + base->index;                 // с текущего индекса будем считать очередной дескриптор подпоследовательности
-
-    while(current_i <= input_size){
-
-        substr_d * temp = get_des(input, input_size, current_i);
-        current_i = temp->index + temp->substr_size;
-
-        if( temp->substr_size > base->substr_size ){                    // по дескрипторам символьных неповторяющихся подпоследовательностей определяем которая из них больше
-            free(base);
-            base = temp;
-        } else {
-            free(temp);
+        if(max->substr_size < next_size){
+            max->substr_size = next_size;
+            max->index = current_i;
         }
+
+        current_i = next_i;
+
     }
 
-    return base;
+    return max->substr_size;
 }
+
+
+size_t merge(char * input, size_t left, size_t m, size_t right, substr_d * result){
+
+    size_t temp_size = max_subseq(input, left,right - left, result);
+
+    if(temp_size > m - left + 1 && temp_size > right-m){
+        return temp_size;
+    } else
+        return 0;
+
+}
+
+
+
+
 
 
 //=============logic for a library trigger =================
@@ -159,26 +152,33 @@ int trigger(FILE *f, FILE *fout){
             return 1;
         }
 
-        int status;
-        int pid = fork();
 
         size_t right = file_size - 1;
         size_t left = 0;
         size_t m = left + (right - left) / 2;
 
-        if( pid == 0 ){
+        int status;
+        int pid = fork();
 
-            shared_buffer[0] = *max_subseq(shared_input, left, m);
-            shared_buffer[1] = *get_right_des(shared_input, m+1, m);
-            exit(0);
+        if( pid != 0 ){
+            max_subseq(shared_input,0 ,m - left ,&shared_buffer[0]);
+
+            shared_buffer[1].substr_size = get_right_des(shared_input, m+1, m);
+            shared_buffer[1].index = m - shared_buffer[1].substr_size + 1;
+            wait(&status);
+//            printf("%d %d\n" , shared_buffer[0].index , shared_buffer[0].substr_size);
+//            printf("%d %d\n" , shared_buffer[1].index , shared_buffer[1].substr_size);
         } else {
+            size_t t = 0;
+            shared_buffer[2].index = m + 1;
+            shared_buffer[2].substr_size = get_des(shared_input, right - m, m + 1, &t);
 
-            shared_buffer[2] = *get_des(shared_input, right - m, m + 1);
-            shared_buffer[3] = *max_subseq(shared_input, m + 1, right - m);
-            waitpid(pid,&status,4);
+            max_subseq(shared_input, m + 1, right - m, &shared_buffer[3]);
+//            printf("%d %d\n" , shared_buffer[2].index , shared_buffer[2].substr_size);
+//            printf("%d %d\n" , shared_buffer[3].index , shared_buffer[3].substr_size);
+            exit(EXIT_SUCCESS);
+
         }
-
-        substr_d * temp = merge(shared_input, &shared_buffer[1], &shared_buffer[2]);
 
         size_t max = 0;
         for(size_t i = 1; i < 4 ; ++i){
@@ -187,22 +187,28 @@ int trigger(FILE *f, FILE *fout){
         }
 
 
-        if(temp == NULL || shared_buffer[max].substr_size <= temp->substr_size ){
+        substr_d * temp = (substr_d*)malloc(sizeof(substr_d));
+        merge(shared_input, shared_buffer[1].index, m, shared_buffer[2].index + shared_buffer[2].substr_size+1 ,temp);
 
+
+        if(temp == NULL || shared_buffer[max].substr_size >= temp->substr_size ){
             char *out = (char *) malloc(shared_buffer[max].substr_size + 1);
             strncpy(out, shared_input + shared_buffer[max].index, shared_buffer[max].substr_size );
             out[shared_buffer[max].substr_size] = '\0';
             fprintf(fout, "%s\n", out);
 
+            free(out);
         } else {
-
             char *out = (char *) malloc(temp->substr_size + 1);
             strncpy(out, shared_input + temp->index, temp->substr_size);
 
             fprintf(fout, "%s\n", out);
 
+            free(out);
+
         }
 
+        free(temp);
 
         munmap(shared_input, file_size);
         munmap(shared_buffer, sizeof(substr_d) * 4 );

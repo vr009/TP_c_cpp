@@ -9,6 +9,6 @@ struct substr_descriptor {
 typedef struct substr_descriptor substr_d;
 
 int trigger(FILE * f, FILE *fout);
-substr_d * max_subseq(char * input, size_t start_i, size_t input_size);
+size_t max_subseq(char * input, size_t start, size_t input_size, substr_d * max);
 
 #endif

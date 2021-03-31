@@ -113,8 +113,7 @@ int trigger(FILE *f, FILE *fout){
 
         substr_d *temp = (substr_d *)malloc(sizeof(substr_d));
 
-        printf("%d\n",max_subseq(input, file_size - 1, temp));
-        printf("%d %d\n", temp->index, temp->substr_size);
+        max_subseq(input, file_size - 1, temp);
 
         char *out = (char *) malloc(temp->substr_size + 1);
         strncpy(out, input + temp->index , temp->substr_size);
