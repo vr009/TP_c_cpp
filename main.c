@@ -21,7 +21,7 @@ int main(int argc, char **argv){
     FILE *f = fopen(argv[1], "r");
     if(f != NULL){
 
-        if( !trigger(f, stdout) )
+        if( !MT_trigger(f, stdout) )
             printf("Some library trouble");
 
         fclose(f);

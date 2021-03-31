@@ -19,7 +19,7 @@ size_t get_des(char * input, size_t input_size, size_t start_i, size_t * next_in
     size_t temp_size = 0;
 
     size_t i = start_i;
-    while( i <=  input_size){
+    while( i <=  input_size + start_i ){
 
         if (strchr(temp, input[i]) == NULL && input[i] != '\n'){
             temp[temp_size] = input[i];
@@ -36,7 +36,6 @@ size_t get_des(char * input, size_t input_size, size_t start_i, size_t * next_in
         }
 
     }
-
 
     return temp_size;
 }
@@ -74,8 +73,6 @@ size_t max_subseq(char * input, size_t start ,size_t input_size, substr_d * max)
 
         size_t next_size = get_des(input, input_size, current_i, &next_i);
 
-        //printf("%d %d\n %d \n", current_i, input_size, start);
-
         if(max->substr_size < next_size){
             max->substr_size = next_size;
             max->index = current_i;
@@ -89,8 +86,9 @@ size_t max_subseq(char * input, size_t start ,size_t input_size, substr_d * max)
 }
 
 
-size_t merge(char * input, size_t left, size_t m, size_t right, substr_d * result){
+size_t merge(char * input, size_t left, size_t right, substr_d * result){
 
+    size_t m = (left + right )/2;
     size_t temp_size = max_subseq(input, left,right - left, result);
 
     if(temp_size > m - left + 1 && temp_size > right-m){
@@ -134,84 +132,107 @@ int64_t getFileSize(FILE *f){
 //================================================
 
 
-int trigger(FILE *f, FILE *fout){
-
+int MT_trigger(FILE *f, FILE *fout){
     if( f != NULL && fout != NULL ){
 
         size_t file_size = getFileSize(f);
 
+        size_t process = sysconf(_SC_NPROCESSORS_ONLN);
+        if (process <= 0) {
+            return -1;
+        }
+
+
         // загружаем файл в память
-        char * shared_input = mmap(NULL, file_size, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
+        char * shared_input = mmap(NULL, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
 
         //создаем область для общего хранения дескрипторов
-        substr_d *shared_buffer = (substr_d*)mmap(NULL, sizeof(substr_d) * 4 , PROT_READ | PROT_WRITE,
-                                   MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+        substr_d *shared_max_buffer = (substr_d*)mmap(NULL, sizeof(substr_d) * process , PROT_READ | PROT_WRITE,
+                                                  MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
-        if ( shared_input == NULL || shared_buffer == NULL ) {
+
+
+
+        substr_d *shared_merged_buffer = (substr_d*)mmap(NULL, sizeof(substr_d) * (process - 1) , PROT_READ | PROT_WRITE,
+                                                      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+
+
+        if ( shared_input == NULL || shared_max_buffer == NULL || shared_merged_buffer == NULL ) {
             printf("Failed to map\n");
             return 1;
         }
 
+        size_t section_size = (file_size - 2)/process;
 
-        size_t right = file_size - 1;
-        size_t left = 0;
-        size_t m = left + (right - left) / 2;
+        for (size_t i = 0; i < process; ++i) {
 
-        int status;
-        int pid = fork();
+            int pid = fork();
+            //не вышло
+            if (pid == -1) {
+                munmap(shared_input, file_size - 1);
+                munmap(shared_max_buffer, sizeof(substr_d) * process);
+                munmap(shared_merged_buffer, sizeof(substr_d) * (process - 1));
+                return -1;
+            }
 
-        if( pid != 0 ){
-            max_subseq(shared_input,0 ,m - left ,&shared_buffer[0]);
+            //вышло, мы в потомке
+            if (pid == 0) {
+                //разбить на несколько частей массив
+                //для каждой части запустить поток
+                max_subseq(shared_input, i*section_size ,section_size , &shared_max_buffer[i]);
 
-            shared_buffer[1].substr_size = get_right_des(shared_input, m+1, m);
-            shared_buffer[1].index = m - shared_buffer[1].substr_size + 1;
+                exit(EXIT_SUCCESS);
+            }
+        }
+
+        //проверяем все процессы
+        int status = 0;
+        for (size_t i = 0; i < process; ++i) {
             wait(&status);
-//            printf("%d %d\n" , shared_buffer[0].index , shared_buffer[0].substr_size);
-//            printf("%d %d\n" , shared_buffer[1].index , shared_buffer[1].substr_size);
-        } else {
-            size_t t = 0;
-            shared_buffer[2].index = m + 1;
-            shared_buffer[2].substr_size = get_des(shared_input, right - m, m + 1, &t);
+        }
 
-            max_subseq(shared_input, m + 1, right - m, &shared_buffer[3]);
-//            printf("%d %d\n" , shared_buffer[2].index , shared_buffer[2].substr_size);
-//            printf("%d %d\n" , shared_buffer[3].index , shared_buffer[3].substr_size);
-            exit(EXIT_SUCCESS);
+        //merge section
+        for(size_t i = 1; i < process; ++i){
+
+            size_t a = 0;
+            size_t left_side = get_right_des(shared_input, section_size, i * section_size);
+            size_t right_side = get_des(shared_input, section_size, i * section_size + 1, &a);
+            merge(shared_input,  left_side, i * section_size +right_side, &shared_merged_buffer[i -1]);
 
         }
 
+
         size_t max = 0;
-        for(size_t i = 1; i < 4 ; ++i){
-            if( shared_buffer[i].substr_size > shared_buffer[max].substr_size )
+        for(size_t i = 1; i < process ; ++i){
+            if( shared_max_buffer[i].substr_size > shared_max_buffer[max].substr_size )
                 max = i;
         }
 
+        size_t merge_max = 0;
+        for(size_t i = 1; i < process ; ++i){
+            if( shared_merged_buffer[i].substr_size > shared_merged_buffer[max].substr_size )
+                merge_max = i;
+        }
 
-        substr_d * temp = (substr_d*)malloc(sizeof(substr_d));
-        merge(shared_input, shared_buffer[1].index, m, shared_buffer[2].index + shared_buffer[2].substr_size+1 ,temp);
 
-
-        if(temp == NULL || shared_buffer[max].substr_size >= temp->substr_size ){
-            char *out = (char *) malloc(shared_buffer[max].substr_size + 1);
-            strncpy(out, shared_input + shared_buffer[max].index, shared_buffer[max].substr_size );
-            out[shared_buffer[max].substr_size] = '\0';
-            fprintf(fout, "%s\n", out);
-
-            free(out);
-        } else {
-            char *out = (char *) malloc(temp->substr_size + 1);
-            strncpy(out, shared_input + temp->index, temp->substr_size);
-
-            fprintf(fout, "%s\n", out);
-
-            free(out);
+        if(shared_merged_buffer[merge_max].substr_size > shared_max_buffer[max].substr_size){
+            shared_max_buffer[max] = shared_merged_buffer[merge_max];
 
         }
 
-        free(temp);
+
+        char *out = (char *) malloc(shared_max_buffer[max].substr_size + 1);
+        strncpy(out, shared_input + shared_max_buffer[max].index, shared_max_buffer[max].substr_size );
+        out[shared_max_buffer[max].substr_size] = '\0';
+
+        fprintf(fout, "%s\n", out);
+
+        free(out);
 
         munmap(shared_input, file_size);
-        munmap(shared_buffer, sizeof(substr_d) * 4 );
+        munmap(shared_max_buffer, sizeof(substr_d) * process );
+        munmap(shared_merged_buffer, sizeof(substr_d) * (process - 1) );
 
         return 1;
     } else
