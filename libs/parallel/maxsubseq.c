@@ -125,7 +125,6 @@ int MT_trigger(FILE *f, FILE *fout){
         if (process <= 0) {
             return -1;
         }
-        process = 1 ;
 
         // загружаем файл в память
         char * shared_input = mmap(NULL, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
@@ -135,8 +134,7 @@ int MT_trigger(FILE *f, FILE *fout){
                                                   MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
 
-
-
+        //область для граничных дескрипторов
         substr_d *shared_merged_buffer = (substr_d*)mmap(NULL, sizeof(substr_d) * (process - 1) , PROT_READ | PROT_WRITE,
                                                       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
