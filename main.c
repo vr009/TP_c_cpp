@@ -41,6 +41,7 @@ int main(int argc, char **argv){
         }
 
         clock_t start_t, end_t;
+
         //Simple implementation
         start_t = clock();
 

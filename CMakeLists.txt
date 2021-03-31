@@ -4,7 +4,7 @@ project(T2)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#set(CMAKE_C_FLAGS "--coverage")
+set(CMAKE_C_FLAGS "--coverage")
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++0x -Wall -Werror -Wpedantic")
 
 add_library(FILE_WORKER STATIC libs/file_worker/file_worker.c)
@@ -16,8 +16,30 @@ file(COPY test/autotest.txt
 
 
 add_executable(T2 main.c)
-target_link_libraries(T2 ${CMAKE_DL_LIBS} SUBSEQUENCE_STR_SIMPLE FILE_WORKER)
+target_link_libraries(T2 ${CMAKE_DL_LIBS} SUBSEQUENCE_STR_SIMPLE )
+target_link_libraries(T2 ${CMAKE_DL_LIBS} FILE_WORKER )
 
 
-#add_executable(T2 main.c)
+
 target_link_libraries(T2 ${CMAKE_DL_LIBS} SUBSEQUENCE_STR_PARALLEL)
+
+
+enable_testing()
+find_package(GTest REQUIRED)
+
+include_directories(${GTEST_INCLUDE_DIRS})
+message(${GTEST_LIBRARIES})
+
+add_executable(tests_simple ${CMAKE_CURRENT_BINARY_DIR}/../simple/test_simple.cpp )
+add_executable(tests_parallel ${CMAKE_CURRENT_BINARY_DIR}/../parallel/test_parallel.cpp )
+add_executable(tests_file_worker ${CMAKE_CURRENT_BINARY_DIR}/../file_worker/test_file_worker.cpp )
+
+
+target_link_libraries(tests_simple ${GTEST_LIBRARIES} -lpthread)
+target_link_libraries(tests_simple  address_lib)
+
+target_link_libraries(tests_parallel ${GTEST_LIBRARIES} -lpthread)
+target_link_libraries(tests_parallel address_lib)
+
+target_link_libraries(tests_file_worker ${GTEST_LIBRARIES} -lpthread)
+target_link_libraries(tests_file_worker address_lib)
