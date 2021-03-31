@@ -26,7 +26,7 @@ size_t get_des(char * input, size_t input_size, size_t start_i, size_t * next_in
             ++i;
         } else {
             size_t j = temp_size;
-            while(temp[j] != input[i]){
+            while(temp[j] != input[i] && j > start_i){
                 --j;
             }
             *next_index = start_i + j + 1;
@@ -51,9 +51,11 @@ size_t max_subseq(char * input, size_t input_size, substr_d * max){
     max->substr_size = 0;
     max->index = 0;
 
-    while(current_i < input_size){
+    while(next_i <= input_size){
 
         size_t next_size = get_des(input, input_size, current_i, &next_i);
+
+        //printf("%d %d\n", current_i, input_size);
 
         if(max->substr_size < next_size){
             max->substr_size = next_size;
@@ -111,6 +113,8 @@ int trigger(FILE *f, FILE *fout){
 
         substr_d *temp = (substr_d *)malloc(sizeof(substr_d));
 
+        printf("%d\n",max_subseq(input, file_size - 1, temp));
+        printf("%d %d\n", temp->index, temp->substr_size);
 
         char *out = (char *) malloc(temp->substr_size + 1);
         strncpy(out, input + temp->index , temp->substr_size);
