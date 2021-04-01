@@ -160,6 +160,8 @@ char * MT_trigger( char * shared_input, size_t file_size ){
 
 
         //merge section
+        // в этой секции берутся размеры ближайших неповторяющихся подпоследовательностей относительно границы массива и ведется поиск макс последовательности относительно этой границы
+        //так мы избегаем ситуацию когда максимальная подпоследоваетлньость не могла быть обработана одним из дочерних процессов
         for(size_t i = 1; i < process; ++i){
 
             size_t a = 0;
@@ -172,14 +174,13 @@ char * MT_trigger( char * shared_input, size_t file_size ){
         }
 
 
+        // в следующих циклах ищем максимальный дескриптор из всех найденных
         size_t max = 0;
         for(size_t i = 1; i < process ; ++i){
             if( shared_max_buffer[i].substr_size > shared_max_buffer[max].substr_size )
                 max = i;
 
-
         }
-
 
         size_t merge_max = 0;
         for(size_t i = 1; i < process ; ++i){
