@@ -1,12 +1,13 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
+#include <iostream>
+#include <cstring>
+#include <cstdio>
+#include <cstdlib>
 
 extern "C"{
 #include "./maxsubseq.h"
 #include "./maxsubseq.c"
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "../file_worker/file_worker.h"
 }
 

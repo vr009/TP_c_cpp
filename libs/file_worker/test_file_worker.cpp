@@ -14,24 +14,28 @@ extern "C"{
 //===========COMPLEX SET======================================
 TEST(full, all1){
 const char * file_name = "../../test/aaa.txt";
+    FILE *f = fopen(file_name, "r");
+    if(f != nullptr){
 
-FILE * f = fopen(file_name, "r");
-size_t file_size = getFileSize(f);
+        size_t file_size = getFileSize(f);
 
-EXPECT_EQ(35, file_size);
+        EXPECT_EQ(35, file_size);
 
-fclose(f);
+        fclose(f);
+    }
 }
 
 TEST(full, all2){
 const char * file_name = "../../test/autotest.txt";
 
 FILE * f = fopen(file_name, "r");
-size_t file_size = getFileSize(f);
+    if(f != nullptr){
+        size_t file_size = getFileSize(f);
 
-EXPECT_EQ(1000167, file_size);
+        EXPECT_EQ(1000167, file_size);
 
-fclose(f);
+        fclose(f);
+    }
 }
 
 
