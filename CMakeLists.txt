@@ -16,25 +16,25 @@ file(COPY test/autotest.txt
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 file(COPY test/autotest.txt
-        DESTINATION libs/file_worker)
+        DESTINATION ../libs/file_worker)
 file(COPY test/autotest.txt
-        DESTINATION libs/parallel)
+        DESTINATION ../libs/parallel)
 file(COPY test/autotest.txt
-        DESTINATION libs/simple)
+        DESTINATION ../libs/simple)
 
 file(COPY test/aaa.txt
-        DESTINATION libs/file_worker)
+        DESTINATION ../libs/file_worker)
 file(COPY test/aaa.txt
-        DESTINATION libs/parallel)
+        DESTINATION ../libs/parallel)
 file(COPY test/aaa.txt
-        DESTINATION libs/simple)
+        DESTINATION ../libs/simple)
 
 file(COPY test/simple_test.txt
-        DESTINATION libs/file_worker)
+        DESTINATION ../libs/file_worker)
 file(COPY test/simple_test.txt
-        DESTINATION libs/parallel)
+        DESTINATION ../libs/parallel)
 file(COPY test/simple_test.txt
-        DESTINATION libs/simple)
+        DESTINATION ../libs/simple)
 
 
 
