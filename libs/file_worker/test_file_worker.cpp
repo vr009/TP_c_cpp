@@ -1,10 +1,11 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
+#include <cstring>
+#include <cstdio>
+#include <cstdlib>
 
 extern "C"{
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+
 #include <sys/mman.h>
 #include "file_worker.h"
 #include "file_worker.c"
@@ -17,7 +18,7 @@ const char * file_name = "../../test/aaa.txt";
 FILE * f = fopen(file_name, "r");
 size_t file_size = getFileSize(f);
 
-ASSERT_EQ(35, file_size);
+EXPECT_EQ(35, file_size);
 
 fclose(f);
 }
@@ -28,7 +29,7 @@ const char * file_name = "../../test/autotest.txt";
 FILE * f = fopen(file_name, "r");
 size_t file_size = getFileSize(f);
 
-ASSERT_EQ(1000167, file_size);
+EXPECT_EQ(1000167, file_size);
 
 fclose(f);
 }

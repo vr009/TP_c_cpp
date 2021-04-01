@@ -20,7 +20,7 @@ size_t file_size = getFileSize(f);
 if (f != nullptr){
     char * input = (char*)mmap(nullptr, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
     char * answer = MT_trigger(input, file_size - 1);
-    ASSERT_EQ(0, strcmp(answer, "saliutrewqkdjfhg["));
+    EXPECT_EQ(0, strcmp(answer, "saliutrewqkdjfhg["));
     munmap(input, file_size - 1);
 }
 
@@ -38,7 +38,7 @@ if (f != nullptr){
 
     char * answer = MT_trigger(input, file_size - 1);
 
-    ASSERT_EQ(0, strcmp(answer, "qwertyuiopasdfghjklzxcvbnm"));
+    EXPECT_EQ(0, strcmp(answer, "qwertyuiopasdfghjklzxcvbnm"));
     munmap(input, file_size - 1);
 }
 
@@ -55,7 +55,7 @@ size_t file_size = getFileSize(f);
 if (f != nullptr){
     char * input = (char*)mmap(nullptr, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
     char * answer = MT_trigger(input, file_size - 1);
-    ASSERT_EQ(0, strcmp(answer, "a"));
+    EXPECT_EQ(0, strcmp(answer, "a"));
     munmap(input, file_size - 1);
 }
 
