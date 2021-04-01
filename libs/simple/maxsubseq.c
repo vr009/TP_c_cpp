@@ -68,7 +68,7 @@ size_t max_subseq(char * input, size_t input_size, substr_d * max){
 
 //=======================================================================
 
-char * trigger(char * input,size_t file_size){
+char * trigger(const char * input,size_t file_size){
 
     if( input != NULL ){
 

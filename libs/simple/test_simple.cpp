@@ -12,55 +12,34 @@ extern "C"{
 }
 
 //===========COMPLEX SET======================================
+
 TEST(full, all1){
-const char * file_name = "./autotest.txt";
 
-FILE * f = fopen(file_name, "r");
-size_t file_size = getFileSize(f);
-
-if (f != nullptr){
-char * input = (char*)mmap(nullptr, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
-char * answer = trigger(input, file_size - 1);
-EXPECT_EQ(0, strcmp(answer, "saliutrewqkdjfhg["));
-munmap(input, file_size - 1);
-}
-
-fclose(f);
+    const char * input = "saliutrewqkdjfhg[";
+    size_t size = strlen(input);
+    char * answer = trigger(input, size );
+    EXPECT_EQ(0, strcmp(answer, "saliutrewqkdjfhg["));
+    free(answer);
 }
 
 TEST(full, all2){
-const char * file_name = "./simple_test.txt";
 
-FILE * f = fopen(file_name, "r");
-size_t file_size = getFileSize(f);
+    const char * input = "aaaaaaaaaaaaaaa";
+    size_t size = strlen(input);
+    char * answer = trigger(input, size );
+    EXPECT_EQ(0, strcmp(answer, "a"));
+    free(answer);
 
-if (f != nullptr){
-char * input = (char*)mmap(nullptr, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
-char * answer = trigger(input, file_size - 1);
-EXPECT_EQ(0, strcmp(answer, "qwertyuiopasdfghjklzxcvbnm"));
-munmap(input, file_size - 1);
-}
-
-
-fclose(f);
 }
 
 
 TEST(full, all3){
-const char * file_name = "./aaa.txt";
 
-FILE * f = fopen(file_name, "r");
-size_t file_size = getFileSize(f);
-
-if (f != nullptr){
-char * input = (char*)mmap(nullptr, file_size - 1, PROT_READ, MAP_SHARED | MAP_PRIVATE, fileno(f), 0);
-char * answer = trigger(input, file_size - 1);
-EXPECT_EQ(0, strcmp(answer, "a"));
-munmap(input, file_size - 1);
-}
-
-
-fclose(f);
+    const char * input = "asasasasasasasasasasasavbnhg";
+    size_t size = strlen(input);
+    char * answer = trigger(input, size );
+    EXPECT_EQ(0, strcmp(answer, "savbnhg"));
+    free(answer);
 }
 
 
