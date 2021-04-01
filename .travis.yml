@@ -49,8 +49,8 @@ script:
   - ./tests_simple
   - ./tests_parallel
   - ./tests_file_worker
-  - ./T2 ./stress_test.txt || travis_terminate 1
-  - ./T2 ./simple_test.txt || travis_terminate 1
+  - ./T2 ./test/stress_test.txt || travis_terminate 1
+  - ./T2 ./test/simple_test.txt || travis_terminate 1
 
 
 after_success:
