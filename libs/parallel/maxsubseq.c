@@ -102,7 +102,7 @@ char * MT_trigger( char * shared_input, size_t file_size ){
     if( shared_input != NULL ){
 
         size_t process = sysconf(_SC_NPROCESSORS_ONLN) % (file_size - 1);
-        if (process <= 0) {
+        if (process == 0) {
             return NULL;
         }
 
