@@ -21,9 +21,9 @@ before_install:
 compiler:
   - gcc
 
-#env:
-#  global:
-#    - CODECOV_TOKEN='d3c18c1c-f6c0-47e8-855c-83e8d14219c1'
+env:
+  global:
+    - CODECOV_TOKEN='d3c18c1c-f6c0-47e8-855c-83e8d14219c1'
 
 install:
   - sudo apt-get update
