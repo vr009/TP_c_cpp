@@ -15,6 +15,28 @@ add_library(SUBSEQUENCE_STR_PARALLEL SHARED libs/parallel/maxsubseq.c)
 file(COPY test/autotest.txt
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
+file(COPY test/autotest.txt
+        DESTINATION libs/file_worker)
+file(COPY test/autotest.txt
+        DESTINATION libs/parallel)
+file(COPY test/autotest.txt
+        DESTINATION libs/simple)
+
+file(COPY test/aaa.txt
+        DESTINATION libs/file_worker)
+file(COPY test/aaa.txt
+        DESTINATION libs/parallel)
+file(COPY test/aaa.txt
+        DESTINATION libs/simple)
+
+file(COPY test/simple_test.txt
+        DESTINATION libs/file_worker)
+file(COPY test/simple_test.txt
+        DESTINATION libs/parallel)
+file(COPY test/simple_test.txt
+        DESTINATION libs/simple)
+
+
 
 add_executable(T2 main.c)
 target_link_libraries(T2 ${CMAKE_DL_LIBS} SUBSEQUENCE_STR_SIMPLE )

@@ -13,7 +13,7 @@ extern "C"{
 
 //===========COMPLEX SET======================================
 TEST(full, all1){
-const char * file_name = "../../test/autotest.txt";
+const char * file_name = "./autotest.txt";
 
 FILE * f = fopen(file_name, "r");
 size_t file_size = getFileSize(f);
@@ -29,7 +29,7 @@ fclose(f);
 }
 
 TEST(full, all2){
-const char * file_name = "../../test/simple_test.txt";
+const char * file_name = "./simple_test.txt";
 
 FILE * f = fopen(file_name, "r");
 size_t file_size = getFileSize(f);
@@ -48,7 +48,7 @@ fclose(f);
 
 
 TEST(full, all3){
-const char * file_name = "../../test/aaa.txt";
+const char * file_name = "./aaa.txt";
 
 FILE * f = fopen(file_name, "r");
 size_t file_size = getFileSize(f);

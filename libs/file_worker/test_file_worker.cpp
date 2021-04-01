@@ -13,7 +13,7 @@ extern "C"{
 
 //===========COMPLEX SET======================================
 TEST(full, all1){
-const char * file_name = "../../test/aaa.txt";
+const char * file_name = "./aaa.txt";
     FILE *f = fopen(file_name, "r");
     if(f != nullptr){
 
@@ -26,7 +26,7 @@ const char * file_name = "../../test/aaa.txt";
 }
 
 TEST(full, all2){
-const char * file_name = "../../test/autotest.txt";
+const char * file_name = "./autotest.txt";
 
 FILE * f = fopen(file_name, "r");
     if(f != nullptr){
