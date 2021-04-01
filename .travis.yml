@@ -45,7 +45,7 @@ script:
   - cmake .
   - make || travis_terminate 1
   - cppcheck *.c --enable=all --verbose
-  - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./T2 ./autotest.txt || travis_terminate 1
+  - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./T2 ./stress_test.txt || travis_terminate 1
   - ./tests_simple
   - ./tests_parallel
   - ./tests_file_worker

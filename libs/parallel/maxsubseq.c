@@ -12,7 +12,7 @@ typedef struct substr_descriptor substr_d;
 
 
 // возвращаем размер неповторяющейся последовательнотси с текущего индекса(start_i) в массиве
-size_t get_des(char * input, size_t input_size, size_t start_i, size_t * next_index){
+size_t get_des( char * input, size_t input_size, size_t start_i, size_t * next_index ){
 
     char temp[100] = {};
     size_t temp_size = 0;
@@ -21,9 +21,11 @@ size_t get_des(char * input, size_t input_size, size_t start_i, size_t * next_in
     while( i <  input_size + start_i ){
 
         if (strchr(temp, input[i]) == NULL && input[i] != '\n'){
+
             temp[temp_size] = input[i];
             ++temp_size;
             ++i;
+
             *next_index = i + 1;
         } else {
             size_t j = temp_size - 1 ;
@@ -177,6 +179,7 @@ char * MT_trigger( char * shared_input, size_t file_size ){
         // в следующих циклах ищем максимальный дескриптор из всех найденных
         size_t max = 0;
         for(size_t i = 1; i < process ; ++i){
+
             if( shared_max_buffer[i].substr_size > shared_max_buffer[max].substr_size )
                 max = i;
 
@@ -192,10 +195,11 @@ char * MT_trigger( char * shared_input, size_t file_size ){
 
 
         if( process > 1 && shared_merged_buffer[merge_max].substr_size > shared_max_buffer[max].substr_size){
+
             shared_max_buffer[max] = shared_merged_buffer[merge_max];
         }
 
-
+        // по готовому дескриптору копируем подстроку
         char *out = (char *) malloc(shared_max_buffer[max].substr_size + 1);
         strncpy(out, shared_input + shared_max_buffer[max].index, shared_max_buffer[max].substr_size );
         out[shared_max_buffer[max].substr_size] = '\0';

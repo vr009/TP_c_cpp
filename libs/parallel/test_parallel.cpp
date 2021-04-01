@@ -31,6 +31,14 @@ TEST(full, all2){
 
 }
 
+TEST(full, all3){
+
+    char input[] = "asasasasasasasasasasasavbnhg";
+    size_t size = strlen(input);
+    char * answer = MT_trigger(input, size );
+    EXPECT_EQ(0, strcmp(answer, "savbnhg"));
+    free(answer);
+}
 
 
 

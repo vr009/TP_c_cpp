@@ -61,7 +61,6 @@ int main(int argc, char **argv){
 
 
         //Parallel implementtion
-
         //работа с динамической библиотекой
 
         void* library;
@@ -80,6 +79,7 @@ int main(int argc, char **argv){
         start_t = clock();
 
         output = mt_trigger(input, file_size);
+
         if(output != NULL)
             printf("Parallel implementation's result: %s\n", output);
         else

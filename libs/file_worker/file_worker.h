@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int64_t getFileSize(FILE *f);
+int64_t getFileSize( FILE *f );
 
 
 #endif //T2_FILE_WORKER_H

@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 
-int64_t getFileSize(FILE *f){
+int64_t getFileSize( FILE *f ){
     int64_t _file_size = 0;
 
     struct stat _fileStatbuff;

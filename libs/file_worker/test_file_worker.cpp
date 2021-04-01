@@ -26,7 +26,7 @@ const char * file_name = "./aaa.txt";
 }
 
 TEST(full, all2){
-const char * file_name = "./autotest.txt";
+const char * file_name = "./stress_test.txt";
 
 FILE * f = fopen(file_name, "r");
     if(f != nullptr){

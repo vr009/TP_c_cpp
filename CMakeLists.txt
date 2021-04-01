@@ -12,14 +12,14 @@ add_library(SUBSEQUENCE_STR_SIMPLE STATIC libs/simple/maxsubseq.c)
 add_library(SUBSEQUENCE_STR_PARALLEL SHARED libs/parallel/maxsubseq.c)
 
 
-file(COPY test/autotest.txt
+file(COPY test/stress_test.txt
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-file(COPY test/autotest.txt
+file(COPY test/stress_test.txt
         DESTINATION ../libs/file_worker)
-file(COPY test/autotest.txt
+file(COPY test/stress_test.txt
         DESTINATION ../libs/parallel)
-file(COPY test/autotest.txt
+file(COPY test/stress_test.txt
         DESTINATION ../libs/simple)
 
 file(COPY test/aaa.txt
