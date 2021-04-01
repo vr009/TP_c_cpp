@@ -140,8 +140,12 @@ char * MT_trigger( char * shared_input, size_t file_size ){
             if (pid == 0) {
                 //разбить на несколько частей массив
                 //для каждой части запустить поток
+                if( i == process - 1){
+                    max_subseq(shared_input, i*section_size  ,file_size , &shared_max_buffer[i]);
+                } else {
 
-                max_subseq(shared_input, i*section_size  ,section_size , &shared_max_buffer[i]);
+                    max_subseq(shared_input, i*section_size  ,section_size , &shared_max_buffer[i]);
+                }
 
                 exit(EXIT_SUCCESS);
             }
@@ -193,7 +197,7 @@ char * MT_trigger( char * shared_input, size_t file_size ){
 
         char *out = (char *) malloc(shared_max_buffer[max].substr_size + 1);
         strncpy(out, shared_input + shared_max_buffer[max].index, shared_max_buffer[max].substr_size );
-
+        out[shared_max_buffer[max].substr_size] = '\0';
 
         munmap(shared_max_buffer, sizeof(substr_d) * process );
         munmap(shared_merged_buffer, sizeof(substr_d) * (process - 1) );
