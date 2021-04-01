@@ -14,7 +14,7 @@ extern "C"{
 //===========COMPLEX SET======================================
 TEST(full, all1){
 
-const char * input = "saliutrewqkdjfhg[";
+char input[] = "saliutrewqkdjfhg[";
 size_t size = strlen(input);
 char * answer = MT_trigger(input, size );
 EXPECT_EQ(0, strcmp(answer, "saliutrewqkdjfhg["));
@@ -23,7 +23,7 @@ free(answer);
 
 TEST(full, all2){
 
-    const char * input = "aaaaaaaaaaaaaaa";
+    char input[] = "aaaaaaaaaaaaaaa";
     size_t size = strlen(input);
     char * answer = MT_trigger(input, size );
     EXPECT_EQ(0, strcmp(answer, "a"));
@@ -34,7 +34,7 @@ TEST(full, all2){
 
 TEST(full, all3){
 
-    const char * input = "asasasasasasasasasasasavbnhg";
+    char input[] = "asasasasasasasasasasasavbnhg";
     size_t size = strlen(input);
     char * answer = MT_trigger(input, size );
     EXPECT_EQ(0, strcmp(answer, "savbnhg"));

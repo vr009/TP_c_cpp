@@ -95,7 +95,7 @@ size_t max_subseq(char * input, size_t start ,size_t input_size, substr_d * max)
 //=====================================================================================
 
 
-char * MT_trigger(const char * shared_input, size_t file_size ){
+char * MT_trigger( char * shared_input, size_t file_size ){
 
     if( shared_input != NULL ){
 
